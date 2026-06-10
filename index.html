@@ -2707,16 +2707,24 @@
   /* ============ Mobile bottom tab ============ */
   .mobile-tab-bar { display: none; }
 
-  /* ============ Responsive = openpath.kr 라이브 breakpoint ============ */
-  /* 라이브 = 1535 / 1392 / 1180 / 961 / 720 */
+  /* ============ Responsive = Figma 마이페이지 4 breakpoint 정합 ============ */
+  /* Figma = ~1920 / 1919~1476 / 1475~912 / 911~ */
 
-  @media (max-width: 1535px) {
-    :root { --container-pad: 28px; }
+  /* ≥1920 = 풀 PC = 좌우 84 padding (라이브 정합) */
+  /* 1919~1476 = 중간 PC = 60 padding */
+  @media (max-width: 1919px) {
+    :root { --container-pad: 60px; }
   }
 
-  @media (max-width: 1392px) {
-    :root { --container-pad: 24px; --gap: 16px; }
-    .layout { gap: 32px; }
+  /* 1535 = 추가 미세 조정 (텍스트 사이즈) */
+  @media (max-width: 1535px) {
+    :root { --container-pad: 60px; }
+  }
+
+  /* 1475~912 = 작은 PC / 큰 태블릿 = 40 padding */
+  @media (max-width: 1475px) {
+    :root { --container-pad: 40px; --gap: 16px; }
+    .layout { gap: 48px; }
     .class-card { padding: 32px; gap: 20px; }
     .class-card .thumb { width: 140px; height: 140px; font-size: 42px; }
     .class-card .body h4 { font-size: 18px; }
@@ -2724,8 +2732,8 @@
   }
 
   @media (max-width: 1180px) {
-    :root { --lnb-w: 240px; }
-    .layout { gap: 24px; }
+    :root { --lnb-w: 240px; --container-pad: 32px; }
+    .layout { gap: 32px; }
     .lnb { padding: 40px 20px; }
     .lnb .profile-img { width: 88px; height: 88px; font-size: 32px; }
     .lnb .name { font-size: 22px; padding-top: 18px; }
@@ -3026,6 +3034,73 @@
     background: var(--gray-09);
     color: #FFFFFF;
     border-color: var(--gray-05);
+  }
+
+  /* ============================================================ */
+  /* ★ 최근 수료증 = 하단 row (3 grid, openpath.kr 마이페이지 정합) */
+  /* ============================================================ */
+  .cert-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .cert-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cert-item:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .cert-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .cert-body { flex: 1; min-width: 0; }
+  .cert-body h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-strong);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cert-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: -0.02em;
+  }
+  .cert-grade {
+    background: var(--primary);
+    color: #FFFFFF;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  @media (max-width: 1180px) {
+    .cert-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 720px) {
+    .cert-row { grid-template-columns: 1fr; }
   }
 
   /* ============================================================ */
@@ -4127,115 +4202,92 @@
         </div>
       </div>
 
-      <div class="hybrid">
-        <div class="col-stack">
-          <div class="card-head" style="margin: 8px 0;">
-            <h3>수강 중 클래스 <span class="tag mint">3</span></h3>
-            <a class="view-all" onclick="goto('courses')">전체 보기 ›</a>
-          </div>
+      <!-- ★ 수강 중 클래스 = main 풀폭 1열 (openpath.kr 마이페이지 정합. 카드 폭 충분 = 제목 fit) -->
+      <!-- 알림 = 자체 헤더 종 panel로 별도 surface / 최근 수료증 = 하단 별도 row -->
+      <div class="col-stack">
+        <div class="card-head" style="margin: 8px 0;">
+          <h3>수강 중 클래스 <span class="tag mint">3</span></h3>
+          <a class="view-all" onclick="goto('courses')">전체 보기 ›</a>
+        </div>
 
-          <!-- 원격훈련 R02 = 메디 강의장 (별도 풀스크린). stat row (진도/출석/점수) -->
-          <div class="class-card distance">
-            <div class="thumb">🤖</div>
-            <div class="body">
-              <div class="tags"><span class="tag purple">원격훈련</span><span class="tag mint sm">수강중</span></div>
-              <h4>AI 활용 기초 - 머신러닝 입문</h4>
-              <div class="meta">2026.05.06 ~ 2026.07.20 · 5주차 D-12</div>
-              <div class="progress-row">
-                <div class="progress"><div class="fill" style="width:37%"></div></div>
-                <span class="pct">37%</span>
-              </div>
-              <div class="stat-row">
-                <div class="stat"><div class="lab">진도</div><div class="val">37<span class="unit">%</span></div></div>
-                <div class="stat success"><div class="lab">출석</div><div class="val">11<span class="unit">/ 30차시</span></div></div>
-                <div class="stat"><div class="lab">평가 점수</div><div class="val">—</div></div>
-              </div>
+        <!-- 원격훈련 R02 = 메디 강의장 (별도 풀스크린). stat row (진도/출석/점수) -->
+        <div class="class-card distance">
+          <div class="thumb">🤖</div>
+          <div class="body">
+            <div class="tags"><span class="tag purple">원격훈련</span><span class="tag mint sm">수강중</span></div>
+            <h4>AI 활용 기초 - 머신러닝 입문</h4>
+            <div class="meta">2026.05.06 ~ 2026.07.20 · 5주차 D-12</div>
+            <div class="progress-row">
+              <div class="progress"><div class="fill" style="width:37%"></div></div>
+              <span class="pct">37%</span>
             </div>
-            <div class="actions">
-              <button class="btn primary" onclick="goto('classroom')">강의실 입장</button>
+            <div class="stat-row">
+              <div class="stat"><div class="lab">진도</div><div class="val">37<span class="unit">%</span></div></div>
+              <div class="stat success"><div class="lab">출석</div><div class="val">11<span class="unit">/ 30차시</span></div></div>
+              <div class="stat"><div class="lab">평가 점수</div><div class="val">—</div></div>
             </div>
           </div>
-
-          <!-- VOD V01 = 수강중 (sCd=100, studyRate<100). 라벨 = '수강하기' (라이브 Contains.js 정합) -->
-          <div class="class-card">
-            <div class="thumb">📊</div>
-            <div class="body">
-              <div class="tags"><span class="tag mint">VOD</span><span class="tag mint sm">수강중</span></div>
-              <h4>리더십과 조직관리</h4>
-              <div class="meta">2026.03.21 ~ 2026.09.21 (무제한 시청)</div>
-              <div class="progress-row">
-                <div class="progress"><div class="fill" style="width:42%"></div></div>
-                <span class="pct">42%</span>
-                <span class="submeta">5파트 · 28챕터 · 총 4시간 42분</span>
-              </div>
-            </div>
-            <div class="actions">
-              <button class="btn primary" onclick="goto('player')">수강하기</button>
-              <button class="btn outline">후기 작성</button>
-            </div>
-          </div>
-
-          <!-- 신청 상품 A08 = 온라인 클래스 수강중 -->
-          <div class="class-card">
-            <div class="thumb">💻</div>
-            <div class="body">
-              <div class="tags"><span class="tag blue">온라인 클래스</span><span class="tag mint sm">수강중</span></div>
-              <h4>UX 리서치 실전 워크숍</h4>
-              <div class="meta">2026.06.01 ~ 2026.06.30 · 4/8회차 · 매주 토 14:00</div>
-              <a class="link-confirm" onclick="alert('Zoom 강의실 링크 열기')">온라인 강의실 링크 확인</a>
-            </div>
+          <div class="actions">
+            <button class="btn primary" onclick="goto('classroom')">강의실 입장</button>
           </div>
         </div>
 
-        <div class="col-stack">
-          <div class="card">
-            <div class="card-head"><h3>🔔 알림 <span class="tag red">3</span></h3><a class="view-all">전체 ›</a></div>
-            <div class="panel-list">
-              <div class="item qna">
-                <div class="icon">💬</div>
-                <div class="body">
-                  <h5>내 질문에 답변이 달렸어요</h5>
-                  <p>AI 활용 기초 · 김지연 강사</p>
-                </div>
-                <span class="time">오늘</span>
-              </div>
-              <div class="item assignment">
-                <div class="icon">📝</div>
-                <div class="body">
-                  <h5>과제 마감 3일 남았어요</h5>
-                  <p>3주차 AI 활용 과제 #3</p>
-                </div>
-                <span class="time">2시간 전</span>
-              </div>
-              <div class="item notice">
-                <div class="icon">📢</div>
-                <div class="body">
-                  <h5>새 공지가 등록되었어요</h5>
-                  <p>5주차 강의 일정 변경</p>
-                </div>
-                <span class="time">어제</span>
-              </div>
+        <!-- VOD V01 = 수강중 (sCd=100, studyRate<100). 라벨 = '수강하기' (라이브 Contains.js 정합) -->
+        <div class="class-card">
+          <div class="thumb">📊</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span><span class="tag mint sm">수강중</span></div>
+            <h4>리더십과 조직관리</h4>
+            <div class="meta">2026.03.21 ~ 2026.09.21 (무제한 시청)</div>
+            <div class="progress-row">
+              <div class="progress"><div class="fill" style="width:42%"></div></div>
+              <span class="pct">42%</span>
+              <span class="submeta">5파트 · 28챕터 · 총 4시간 42분</span>
             </div>
           </div>
+          <div class="actions">
+            <button class="btn primary" onclick="goto('player')">수강하기</button>
+            <button class="btn outline">후기 작성</button>
+          </div>
+        </div>
 
-          <div class="card">
-            <div class="card-head"><h3>🏆 최근 수료증</h3><a class="view-all" onclick="goto('grades')">전체 ›</a></div>
-            <div class="panel-list">
-              <div class="item">
-                <div class="icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;">🏅</div>
-                <div class="body">
-                  <h5>조직행동과 인사관리 (A+)</h5>
-                  <p>2026.05.30 수료</p>
-                </div>
-              </div>
-              <div class="item">
-                <div class="icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;">🏅</div>
-                <div class="body">
-                  <h5>Python 프로그래밍 기초 (A)</h5>
-                  <p>2026.05.12 수료</p>
-                </div>
-              </div>
-            </div>
+        <!-- 신청 상품 A08 = 온라인 클래스 수강중 -->
+        <div class="class-card">
+          <div class="thumb">💻</div>
+          <div class="body">
+            <div class="tags"><span class="tag blue">온라인 클래스</span><span class="tag mint sm">수강중</span></div>
+            <h4>UX 리서치 실전 워크숍</h4>
+            <div class="meta">2026.06.01 ~ 2026.06.30 · 4/8회차 · 매주 토 14:00</div>
+            <a class="link-confirm" onclick="alert('Zoom 강의실 링크 열기')">온라인 강의실 링크 확인</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ★ 최근 수료증 = 하단 별도 row (카드 옆 X. 동기 부여 element 유지) -->
+      <div class="card-head" style="margin: 32px 0 12px;">
+        <h3>🏆 최근 수료증</h3>
+        <a class="view-all" onclick="goto('grades')">전체 ›</a>
+      </div>
+      <div class="cert-row">
+        <div class="cert-item">
+          <div class="cert-icon">🏅</div>
+          <div class="cert-body">
+            <h5>조직행동과 인사관리</h5>
+            <div class="cert-meta"><span class="cert-grade">A+</span><span>2026.05.30 수료</span></div>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-icon">🏅</div>
+          <div class="cert-body">
+            <h5>Python 프로그래밍 기초</h5>
+            <div class="cert-meta"><span class="cert-grade">A</span><span>2026.05.12 수료</span></div>
+          </div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-icon">🏅</div>
+          <div class="cert-body">
+            <h5>조직 커뮤니케이션 실무</h5>
+            <div class="cert-meta"><span class="cert-grade">B+</span><span>2026.04.28 수료</span></div>
           </div>
         </div>
       </div>
