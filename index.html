@@ -749,6 +749,57 @@
     border-color: #FFFFFF;
   }
 
+  /* ★ Streak 뱃지 = "연속 N일째 학습 중" (page-hero 우측) */
+  .page-hero-streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 22px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--gray-07);
+    border-radius: 16px;
+    flex-shrink: 0;
+  }
+  .page-hero-streak .streak-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .page-hero-streak .streak-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    line-height: 1.2;
+  }
+  .page-hero-streak .streak-count {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-03);
+    letter-spacing: -0.02em;
+  }
+  .page-hero-streak .streak-count strong {
+    color: var(--mint-05);
+    font-weight: 900;
+    font-size: 20px;
+    margin: 0 2px;
+  }
+  .page-hero-streak .streak-sub {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--gray-05);
+    letter-spacing: -0.02em;
+  }
+
+  @media (max-width: 720px) {
+    .page-hero-streak {
+      padding: 10px 16px;
+      gap: 10px;
+    }
+    .page-hero-streak .streak-icon { font-size: 22px; }
+    .page-hero-streak .streak-count strong { font-size: 17px; }
+  }
+
   .quick-stats {
     display: flex; gap: 8px; flex-wrap: wrap;
     font-size: 12px;
@@ -3642,18 +3693,19 @@
 
     <!-- ============ Page: 대시보드 (대시보드 홈) ============ -->
     <section class="page" data-page="dashboard">
-      <!-- ★ PageHero = Figma PageHero/Learner Portal/PC 정확 복제 (CTA 제거) -->
+      <!-- ★ PageHero = 재찬님 인사 + 연속 학습 뱃지 우측 -->
       <div class="page-hero">
         <div class="page-hero-text">
           <h1>재찬님, 안녕하세요!</h1>
           <p>오늘도 즐거운 학습 되세요.</p>
         </div>
-      </div>
-
-      <div class="quick-stats">
-        <span class="qstat primary">📚 <strong>3</strong>개 수강중</span>
-        <span class="qstat warn">⭐ 멤버십 <strong>D-7</strong></span>
-        <span class="qstat">🔥 <strong>7일</strong> 연속 학습</span>
+        <div class="page-hero-streak">
+          <span class="streak-icon">🔥</span>
+          <div class="streak-text">
+            <span class="streak-count">연속 <strong>7</strong>일째</span>
+            <span class="streak-sub">학습 중</span>
+          </div>
+        </div>
       </div>
 
       <div class="kpi-row">
