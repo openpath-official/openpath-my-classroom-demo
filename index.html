@@ -2885,6 +2885,10 @@
     border-radius: 50%;
     border: 2px solid var(--gray-10);
   }
+  /* Avatar = mypage dropdown trigger */
+  .mc-header-avatar-wrap {
+    position: relative;
+  }
   .mc-header-avatar {
     width: 32px; height: 32px;
     background: var(--mint-05);
@@ -2894,6 +2898,81 @@
     font-weight: 800;
     font-size: 13px;
     cursor: pointer;
+  }
+  .mc-header-avatar-wrap .dropdown {
+    position: absolute;
+    top: 44px; right: 0;
+    width: 240px;
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
+    padding: 10px 0;
+    z-index: 110;
+    display: none;
+  }
+  .mc-header-avatar-wrap.open .dropdown { display: block; }
+  .mc-header-avatar-wrap .dropdown .header {
+    padding: 10px 16px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 6px;
+  }
+  .mc-header-avatar-wrap .dropdown .header h5 {
+    font-size: 14px; color: var(--text-strong);
+    font-weight: 700; margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .mc-header-avatar-wrap .dropdown .header p {
+    font-size: 11.5px; color: var(--muted);
+    letter-spacing: -0.02em;
+  }
+  .mc-header-avatar-wrap .dropdown .section-label {
+    font-size: 10px;
+    color: var(--gray-05);
+    font-weight: 700;
+    padding: 8px 16px 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .mc-header-avatar-wrap .dropdown a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px;
+    font-size: 13px;
+    color: #475569;
+    cursor: pointer;
+    letter-spacing: -0.02em;
+  }
+  .mc-header-avatar-wrap .dropdown a:hover { background: var(--bg-soft); color: var(--text-strong); }
+  .mc-header-avatar-wrap .dropdown a.logout { color: var(--danger); }
+  .mc-header-avatar-wrap .dropdown .divider {
+    height: 1px; background: var(--border-soft); margin: 6px 0;
+  }
+
+  /* LNB 마이페이지 가기 링크 = 별도 surface 강조 */
+  .lnb-mypage-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 16px 16px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.04);
+    color: var(--gray-04);
+    border: 1px dashed var(--gray-07);
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: -0.02em;
+    transition: all 0.15s;
+  }
+  .lnb-mypage-link:hover {
+    background: rgba(255,255,255,0.08);
+    color: #FFFFFF;
+    border-color: var(--gray-05);
+  }
+  .lnb-mypage-link .icon {
+    font-size: 13px;
+    font-weight: 700;
   }
   .mc-header-exit {
     margin-left: 4px;
@@ -3075,19 +3154,19 @@
 </head>
 <body data-area="public">
 
-<!-- ★ Demo banner = 풀페이지 "내 강의장" 데모 안내 -->
+<!-- ★ Demo banner = 풀페이지 "내 강의장" 데모 v2 = 서브도메인 분리 구조 -->
 <div class="demo-banner">
   <div class="demo-banner-inner">
-    <span class="chip">FULLPAGE v1</span>
-    <strong>풀페이지 "내 강의장" 데모 (메디 default)</strong>
-    <span>오픈패스 GNB ↔ "내 강의장" 진입 시 자체 헤더 + 검정 LNB 풀페이지 전환 · 계정 메뉴 = LNB 하단 통합</span>
+    <span class="chip">FULLPAGE v2</span>
+    <strong>"내 강의장" = 별도 서브도메인 (학습 5개) / 마이페이지 = openpath.kr 그대로</strong>
+    <span>학습 = 대시보드·수강과목·출결·성적·질의응답 (LMS) · 마이페이지 = 개인정보·결제·쿠폰·1:1문의 (openpath.kr) · 자체 헤더 avatar dropdown으로 마이페이지 빠른 접근</span>
     <div class="links">
       <a onclick="goto('home')">openpath.kr 홈</a>
       <a onclick="goto('dashboard')">내 강의장 → 대시보드</a>
       <a onclick="goto('courses')">수강 과목</a>
       <a onclick="goto('classroom')">원격 강의장</a>
       <a onclick="goto('player')">VOD 플레이어 (몰입 모드)</a>
-      <a onclick="goto('account')">계정 메뉴 (LNB 하단)</a>
+      <a onclick="goto('account')">마이페이지 (참고용 = openpath.kr surface)</a>
     </div>
   </div>
 </div>
@@ -3147,7 +3226,27 @@
   <div class="mc-header-right">
     <button class="mc-header-search" aria-label="검색" onclick="alert('검색')">🔍</button>
     <button class="mc-header-alarm" aria-label="알림" onclick="alert('알림 패널')">🔔<span class="dot"></span></button>
-    <div class="mc-header-avatar" onclick="alert('프로필')">관</div>
+
+    <!-- avatar = openpath.kr 마이페이지 dropdown 빠른 접근 -->
+    <div class="mc-header-avatar-wrap" id="mcAvatarWrap">
+      <div class="mc-header-avatar" onclick="toggleMcAvatar()">관</div>
+      <div class="dropdown">
+        <div class="header">
+          <h5>관자님</h5>
+          <p>openpath@duotone.io</p>
+        </div>
+
+        <p class="section-label">openpath.kr 마이페이지</p>
+        <a onclick="goto('account'); closeMcAvatar();">👤 개인 정보 관리</a>
+        <a onclick="goto('order'); closeMcAvatar();">🧾 결제·환불 내역</a>
+        <a onclick="goto('coupon'); closeMcAvatar();">🎁 내 쿠폰</a>
+        <a onclick="goto('qna-help'); closeMcAvatar();">✉️ 1:1 문의</a>
+
+        <div class="divider"></div>
+        <a class="logout" onclick="alert('로그아웃'); closeMcAvatar();">↪ 로그아웃</a>
+      </div>
+    </div>
+
     <button class="mc-header-exit" onclick="goto('home')">‹ 포털 나가기</button>
   </div>
 </header>
@@ -3178,8 +3277,8 @@
 
     <hr class="divider">
 
-    <!-- 학습 메뉴 (메디 default 5개) -->
-    <p class="menu-sub-label">학습</p>
+    <!-- 학습 메뉴 (메디 LMS = classroom 서브도메인. 학습 5개만 = 풀페이지) -->
+    <!-- 계정 메뉴 (개인정보·결제·쿠폰·1:1문의) = openpath.kr 마이페이지 = 별도 surface. 자체 헤더 avatar dropdown으로 빠른 접근. -->
     <ul>
       <li data-nav="dashboard" onclick="goto('dashboard')"><a>대시보드</a></li>
       <li data-nav="courses" onclick="goto('courses')"><a>수강 과목</a></li>
@@ -3190,16 +3289,11 @@
 
     <hr class="divider">
 
-    <!-- 계정 메뉴 (mypage 4탭 = 풀페이지 안에서 처리 = 사용자 페이지 이탈 X) -->
-    <p class="menu-sub-label">계정</p>
-    <ul>
-      <li data-nav="account" onclick="goto('account')"><a>개인 정보 관리</a></li>
-      <li data-nav="order" onclick="goto('order')"><a>결제/환불 내역</a></li>
-      <li data-nav="coupon" onclick="goto('coupon')"><a>내 쿠폰</a></li>
-      <li data-nav="qna-help" onclick="goto('qna-help')"><a>1:1 문의</a></li>
-    </ul>
-
-    <hr class="divider">
+    <!-- 마이페이지 = openpath.kr surface = 별도 진입 안내 -->
+    <div class="lnb-mypage-link" onclick="alert('openpath.kr 마이페이지 = 별도 surface. 데모는 같은 페이지 내에서 표시.\\n실제 = openpath.kr/mypage 이동')">
+      <span class="icon">↗</span>
+      <span>마이페이지 가기</span>
+    </div>
 
     <ul>
       <li class="log" onclick="alert('로그아웃')"><a>로그아웃</a></li>
@@ -4064,7 +4158,7 @@
 
     <!-- ============ Page: 개인 정보 관리 (Figma Mypage 7390:12924 정합) ============ -->
     <section class="page" data-page="account">
-      <div class="page-head"><div><h1>개인 정보 관리</h1></div></div>
+      <div class="page-head"><div><h1>개인 정보 관리</h1><p style="color: var(--gray-05); font-size: 13px; margin-top: 4px;">↗ openpath.kr 마이페이지 surface (데모는 같은 페이지 내 표시 / 실제 = openpath.kr/mypage 이동)</p></div></div>
 
       <!-- ① 기본 회원 정보 = 이름/이메일/휴대폰/닉네임/생년월일/성별/연동 계정 -->
       <div class="my-info-manage">
@@ -4562,7 +4656,7 @@
 
     <!-- ============ Page: 결제/환불 내역 (openpath.kr 라이브 정합) ============ -->
     <section class="page" data-page="order">
-      <div class="page-head"><div><h1>결제/환불 내역</h1><p>결제 완료·환불 완료·영수증·기간 연장</p></div></div>
+      <div class="page-head"><div><h1>결제/환불 내역</h1><p style="color: var(--gray-05); font-size: 13px; margin-top: 4px;">↗ openpath.kr 마이페이지 surface · 결제 완료·환불 완료·영수증·기간 연장</p></div></div>
 
       <div class="tabs">
         <button class="active">전체 <span class="count">4</span></button>
@@ -4610,7 +4704,7 @@
 
     <!-- ============ Page: 내 쿠폰 (openpath.kr .entryCoupon + .myCouponList 정확 복제) ============ -->
     <section class="page" data-page="coupon">
-      <div class="page-head"><div><h1>내 쿠폰</h1></div></div>
+      <div class="page-head"><div><h1>내 쿠폰</h1><p style="color: var(--gray-05); font-size: 13px; margin-top: 4px;">↗ openpath.kr 마이페이지 surface (데모 내 표시 / 실제 = openpath.kr/mypage)</p></div></div>
 
       <!-- ① .entryCoupon = 검정 top border + 가로 form -->
       <div class="entry-coupon">
@@ -4659,7 +4753,7 @@
 
     <!-- ============ Page: 1:1 문의 (openpath.kr .qnaTop + .qnaList 정확 복제) ============ -->
     <section class="page" data-page="qna-help">
-      <div class="page-head"><div><h1>1:1 문의</h1></div></div>
+      <div class="page-head"><div><h1>1:1 문의</h1><p style="color: var(--gray-05); font-size: 13px; margin-top: 4px;">↗ openpath.kr 마이페이지 surface (데모 내 표시 / 실제 = openpath.kr/mypage)</p></div></div>
 
       <!-- .qnaTop = 흰 banner 107h / radius 16 + Mint 텍스트 link -->
       <div class="qna-top">
@@ -4832,7 +4926,7 @@
     document.getElementById('lnbOverlay').classList.remove('open');
   }
 
-  /* ============ Profile dropdown ============ */
+  /* ============ Profile dropdown (openpath.kr GNB) ============ */
   function toggleProfile() {
     document.getElementById('profileWrap').classList.toggle('open');
   }
@@ -4842,6 +4936,19 @@
   document.addEventListener('click', (e) => {
     const w = document.getElementById('profileWrap');
     if (w && !w.contains(e.target)) closeProfile();
+  });
+
+  /* ============ My Classroom Avatar dropdown (자체 헤더 = 마이페이지 빠른 접근) ============ */
+  function toggleMcAvatar() {
+    document.getElementById('mcAvatarWrap').classList.toggle('open');
+  }
+  function closeMcAvatar() {
+    const w = document.getElementById('mcAvatarWrap');
+    if (w) w.classList.remove('open');
+  }
+  document.addEventListener('click', (e) => {
+    const w = document.getElementById('mcAvatarWrap');
+    if (w && !w.contains(e.target)) closeMcAvatar();
   });
 
   /* ============ Classroom tab switching ============ */
