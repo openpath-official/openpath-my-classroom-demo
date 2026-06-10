@@ -2847,7 +2847,6 @@
   .mc-header-right {
     display: flex; align-items: center; gap: 12px;
   }
-  .mc-header-search,
   .mc-header-alarm {
     width: 36px; height: 36px;
     display: flex; align-items: center; justify-content: center;
@@ -2860,7 +2859,6 @@
     font-size: 16px;
     transition: all 0.15s;
   }
-  .mc-header-search:hover,
   .mc-header-alarm:hover { background: var(--gray-09); color: #FFFFFF; }
   .mc-header-alarm .dot {
     position: absolute;
@@ -3142,8 +3140,7 @@
   /* 모바일 layout (1180 이하) = 자체 헤더 = 햄버거 표시 / 우측 element 일부 축약 */
   @media (max-width: 1180px) {
     body[data-area="portal"] .mc-header-hamburger { display: flex; }
-    /* 모바일 = 검색·알림·avatar는 모달 안으로 통합 = 우측 element 일부 숨김 */
-    body[data-area="portal"] .mc-header-search,
+    /* 모바일 = title·divider·포털나가기 = 모달 안으로 통합 (= 우측 element 축약) */
     body[data-area="portal"] .mc-header-divider,
     body[data-area="portal"] .mc-header-title,
     body[data-area="portal"] .mc-header-exit { display: none; }
@@ -3389,7 +3386,6 @@
     <span class="mc-header-title">내 강의장</span>
   </div>
   <div class="mc-header-right">
-    <button class="mc-header-search" aria-label="검색" onclick="alert('검색')">🔍</button>
     <button class="mc-header-alarm" aria-label="알림" onclick="alert('알림 패널')">🔔<span class="dot"></span></button>
 
     <!-- avatar = openpath.kr 마이페이지 dropdown 빠른 접근 -->
