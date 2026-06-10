@@ -1,0 +1,4899 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPENPATH — 내 강의장 (풀페이지 데모 v1)</title>
+<style>
+  /* ============ 라이브 fonts.css 정합 (woff 직접 호스팅) ============ */
+  /* Noto Sans KR */
+  @font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 400; font-style: normal;
+    src: local('NotoSans-Regular'), url('fonts/NotoSans-Regular.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 500; font-style: normal;
+    src: local('NotoSans-Medium'), url('fonts/NotoSans-Medium.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 700; font-style: normal;
+    src: local('NotoSans-Bold'), url('fonts/NotoSans-Bold.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Noto Sans KR';
+    font-weight: 900; font-style: normal;
+    src: local('NotoSans-Black'), url('fonts/NotoSans-Black.woff') format('woff');
+  }
+  /* Mark Pro = 영문/숫자 한정 */
+  @font-face {
+    font-family: 'Mark Pro';
+    font-style: normal; font-weight: 450;
+    src: url('fonts/FFMarkProBook_font.woff') format('woff');
+    unicode-range: U+0041-005A, U+0061-007A, U+0030-0039, U+2019, U+002C;
+  }
+  @font-face {
+    font-family: 'Mark Pro';
+    font-style: normal; font-weight: 500;
+    src: url('fonts/FFMarkProMedium_font.woff') format('woff');
+    unicode-range: U+0041-005A, U+0061-007A, U+0030-0039, U+2019, U+002C;
+  }
+  @font-face {
+    font-family: 'Mark Pro';
+    font-style: normal; font-weight: 700;
+    src: url('fonts/FFMarkProBold_font.woff') format('woff');
+    unicode-range: U+0041-005A, U+0061-007A, U+0030-0039, U+2019, U+002C;
+  }
+  @font-face {
+    font-family: 'Mark Pro';
+    font-style: normal; font-weight: 800;
+    src: url('fonts/FFMarkProHeavy_font.woff') format('woff');
+    unicode-range: U+0041-005A, U+0061-007A, U+0030-0039, U+2019, U+002C;
+  }
+  @font-face {
+    font-family: 'Mark Pro';
+    font-style: normal; font-weight: 900;
+    src: url('fonts/FFMarkProBlack_font.woff') format('woff');
+    unicode-range: U+0041-005A, U+0061-007A, U+0030-0039, U+2019, U+002C;
+  }
+
+  :root {
+    /* ★ Figma [OPP] 05_Style Guide 정확치 (Deliver 2026 추출) */
+
+    /* Mint 10단계 (Figma Primary/Mint01 ~ Mint10) */
+    --mint-01: #D4F7F6; /* chip bg / icon bg */
+    --mint-02: #A5EFEC;
+    --mint-03: #7EE7E4;
+    --mint-04: #53DFDB;
+    --mint-05: #28D7D2; /* Active accent indicator (sidebar) */
+    --mint-06: #22B7B2; /* Progress fill + AccentBar 4px */
+    --mint-07: #1C9793; /* Chip text / brand mint */
+    --mint-08: #167673;
+    --mint-09: #105654;
+    --mint-10: #0A3634; /* Deep dark mint */
+
+    /* Grayscale 9단계 (Figma Grayscale/Gray00 ~ Gray10) */
+    --gray-00: #F6F7F8; /* Page bg */
+    --gray-01: #EDF0F2; /* Progress bg */
+    --gray-02: #D6D8DC; /* Border */
+    --gray-03: #B7BCC1; /* Sidebar inactive text */
+    --gray-04: #A2A7AC; /* Hero subtitle */
+    --gray-05: #8A9095; /* Muted */
+    --gray-07: #5E6167; /* Sub text (card meta) */
+    --gray-09: #303338; /* Sidebar sub bg (LogoBox, UserBlock, ActiveBg) */
+    --gray-10: #191919; /* Main text + Sidebar bg + CTA bg */
+
+    /* Legacy 명명 호환 (mint-1~8 = 데모 기존 코드 유지) */
+    --mint-1: var(--mint-01);
+    --mint-2: var(--mint-03);
+    --mint-3: var(--mint-05);
+    --mint-4: var(--mint-06);
+    --mint-5: var(--mint-07);
+    --mint-6: var(--mint-08);
+    --mint-7: var(--mint-09);
+    --mint-8: var(--mint-10);
+
+    --primary: var(--mint-07); /* brand */
+    --primary-soft: var(--mint-03);
+    --primary-dark: var(--mint-08);
+    --primary-tint: var(--mint-01);
+    --primary-tint-strong: var(--mint-03);
+    --primary-accent: var(--mint-05); /* active indicator */
+    --primary-bar: var(--mint-06); /* progress bar + accent bar */
+
+    /* CTA = Figma 정확치 = Gray10 fill */
+    --btn-primary-bg: var(--gray-10);
+    --btn-primary-bg-hover: #464A4F;
+    --btn-primary-text: #FFFFFF;
+
+    /* Neutral semantic (Figma 정확치) */
+    --text-strong: var(--gray-10);
+    --text: #303338;
+    --text-mid: #464A4F;
+    --muted: #74787E;
+    --muted-soft: var(--gray-05);
+    --info-text: var(--gray-07);
+    --dim: var(--gray-03);
+    --border: var(--gray-02);
+    --border-soft: var(--gray-01);
+    --bg-soft: var(--gray-00);
+    --bg: #FFFFFF;
+    --surface: #FFFFFF;
+
+    /* Accent (라이브) */
+    --danger: #FE6565; /* .input.wrong, footer 강조 */
+    --success: #0CC122;
+    --info: #8B57F4;
+    --info-blue: #3D7AF5;
+    --warn-cta: #FE6565;
+    --warn-bg: #FFF4F4;
+    --kakao: #FEE500;
+
+    --accent-blue: #DBEAFE;
+    --accent-green: #D5F5DE;
+    --accent-yellow: #FFF4D6;
+    --accent-red: #FFE0E0;
+    --accent-purple: #ECE0FE;
+    --accent-mint: var(--mint-1);
+
+    /* Layout = openpath.kr 라이브 명세 */
+    --container-max: 1752px;
+    --container-pad: 84px; /* 라이브 header padding 0 84px */
+    --gnb-h: 92px;
+    --lnb-w: 240px; /* Figma Sidebar 정확치 (라이브 269 → Deliver 240) */
+    --gap: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  /* Figma Style Guide body = 'Noto Sans KR' (한글 기본) + 'Mark Pro' (영문 강조: OPENPATH 로고만) / -2% / 14px / 400 */
+  body {
+    font-family: 'Noto Sans KR', 'Mark Pro', sans-serif;
+    background: #FFFFFF; color: var(--text-strong);
+    line-height: 1.45;
+    font-size: 14px; font-weight: 400;
+    letter-spacing: -0.02em; /* Figma -2% = letter-spacing -0.02em */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* OPENPATH 로고만 Mark Pro Black */
+  .logo, .brand .logo, .opp-gnb .logo {
+    font-family: 'Mark Pro', 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; }
+  ul { list-style: none; }
+  .sr { position: absolute; left: -9999px; }
+
+  /* ============ Demo banner (작업용) ============ */
+  .demo-banner {
+    background: #0F172A; color: #E2E8F0;
+    padding: 8px 0;
+    font-size: 11.5px;
+  }
+  .demo-banner-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  .demo-banner .chip {
+    background: rgba(20,184,166,0.25); color: #99F6E4;
+    border-radius: 4px; padding: 2px 8px;
+    font-weight: 700;
+  }
+  .demo-banner strong { color: #FFFFFF; }
+  .demo-banner .links { margin-left: auto; display: flex; gap: 10px; }
+  .demo-banner .links a {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px; padding: 2px 8px;
+    cursor: pointer;
+  }
+  .demo-banner .links a:hover { background: rgba(255,255,255,0.2); }
+
+  /* ============ GNB (openpath.kr 신규 디자인) ============ */
+  .opp-gnb {
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .opp-gnb-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+    height: var(--gnb-h);
+    display: flex; align-items: center; gap: 36px;
+  }
+  .opp-gnb .logo {
+    font-size: 22px; font-weight: 900; color: var(--text-strong);
+    letter-spacing: -0.5px;
+    cursor: pointer;
+  }
+  .opp-gnb .logo .dot { color: var(--primary); }
+
+  .opp-gnb nav.primary {
+    display: flex; gap: 4px;
+    flex: 1;
+  }
+  .opp-gnb nav.primary a {
+    font-size: 14.5px; color: #475569; font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+  }
+  .opp-gnb nav.primary a:hover { color: var(--text-strong); background: var(--bg-soft); }
+  .opp-gnb nav.primary a.active {
+    color: var(--primary-dark);
+    background: var(--primary-tint);
+  }
+  .opp-gnb nav.primary a .new-dot {
+    position: absolute; top: 4px; right: 8px;
+    width: 6px; height: 6px;
+    background: var(--danger); border-radius: 50%;
+  }
+
+  .opp-gnb .util { display: flex; gap: 8px; align-items: center; }
+  .opp-gnb .util .icon-btn {
+    width: 38px; height: 38px;
+    background: transparent; border: none;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #475569;
+    position: relative;
+  }
+  .opp-gnb .util .icon-btn:hover { background: var(--bg-soft); }
+  .opp-gnb .util .icon-btn .dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: var(--danger); border-radius: 50%;
+    border: 2px solid #FFFFFF;
+  }
+  /* 핵심 = "내 강의장" CTA (= 풀페이지 진입점) — 라이브 .btn1 검정 fill 패턴 */
+  .opp-gnb .cta-mypage {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 2px solid var(--btn-primary-bg);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 13.5px; font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    margin-left: 4px;
+  }
+  .opp-gnb .cta-mypage:hover { background: var(--btn-primary-bg-hover); border-color: var(--btn-primary-bg-hover); }
+
+  /* 프로필 dropdown */
+  .opp-gnb .profile-wrap { position: relative; }
+  .opp-gnb .profile-wrap .avatar {
+    width: 38px; height: 38px;
+    background: var(--primary-tint); color: var(--primary-dark);
+    border: 1px solid var(--accent-mint);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+    cursor: pointer;
+  }
+  .opp-gnb .profile-wrap .dropdown {
+    position: absolute;
+    top: 48px; right: 0;
+    width: 240px;
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+    padding: 10px 0;
+    z-index: 100;
+    display: none;
+  }
+  .opp-gnb .profile-wrap.open .dropdown { display: block; }
+  .opp-gnb .profile-wrap .dropdown .header {
+    padding: 8px 16px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 6px;
+  }
+  .opp-gnb .profile-wrap .dropdown .header h5 {
+    font-size: 14px; color: var(--text-strong); margin-bottom: 2px;
+  }
+  .opp-gnb .profile-wrap .dropdown .header p {
+    font-size: 11.5px; color: var(--muted);
+  }
+  .opp-gnb .profile-wrap .dropdown a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px;
+    font-size: 13px; color: #475569;
+    cursor: pointer;
+  }
+  .opp-gnb .profile-wrap .dropdown a:hover { background: var(--bg-soft); color: var(--text-strong); }
+  .opp-gnb .profile-wrap .dropdown a.logout { color: var(--danger); }
+  .opp-gnb .profile-wrap .dropdown .divider {
+    height: 1px; background: var(--border-soft); margin: 6px 0;
+  }
+
+  /* 햄버거 (모바일) */
+  .opp-gnb .menu-btn { display: none; }
+
+  /* ============ Layout (LNB + Main) ============ */
+  .layout {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 60px var(--container-pad) 80px;
+    display: grid;
+    grid-template-columns: 333px 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  /* LNB hidden on public + classroom + player (VOD 몰입) pages */
+  body[data-area="public"] .layout,
+  body[data-area="classroom"] .layout,
+  body[data-area="player"] .layout {
+    grid-template-columns: 1fr;
+  }
+  body[data-area="public"] .lnb,
+  body[data-area="classroom"] .lnb,
+  body[data-area="player"] .lnb { display: none; }
+
+  /* 강의장 + player = 풀폭 (LNB 없이 자체 layout) */
+  body[data-area="classroom"] .layout,
+  body[data-area="player"] .layout {
+    padding: 0;
+    max-width: 100%;
+    gap: 0;
+  }
+
+  /* ============ LNB = Figma Mypage/PC 정합 (333w 흰 박스 / radius 20 / shadow / 중앙정렬) ============ */
+  .lnb {
+    width: 333px;
+    background: #FFFFFF;
+    color: var(--gray-10);
+    padding: 60px 0 50px;
+    text-align: center;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--gnb-h) + 32px);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  /* LogoBox hidden in mypage Figma 정합 = 마이페이지에는 OPENPATH 로고 X (GNB에 있음) */
+  .lnb-logobox { display: none; }
+
+  /* UserBlock = 100×100 avatar + 24px name + 13px meta 중앙정렬 */
+  .lnb-userblock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 0 30px;
+    position: relative;
+  }
+  .lnb-avatar {
+    width: 100px; height: 100px;
+    background: var(--mint-05);
+    border-radius: 50%;
+    color: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 800;
+    flex-shrink: 0;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .lnb-avatar::after {
+    content: '';
+    width: 28px; height: 28px;
+    background: var(--mint-07);
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    position: absolute;
+    right: -4px; bottom: -2px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path d='M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25a1.75 1.75 0 0 1 .445-.758l8.61-8.61Z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px;
+  }
+  .lnb-user-info {
+    flex: none;
+    text-align: center;
+    width: 100%;
+  }
+  .lnb-user-name {
+    color: var(--gray-10);
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .lnb-user-role,
+  .lnb-user-meta {
+    color: var(--gray-07);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+  }
+  .lnb-user-badge,
+  .lnb-chip { display: none; }
+
+  /* Divider = dashed Gray02 (Figma 정합) */
+  .lnb hr.divider,
+  .lnb .divider {
+    border: none;
+    border-top: 1px dashed var(--gray-02);
+    margin: 36px 30px;
+    padding: 0;
+    height: 0;
+  }
+
+  /* 메뉴 list = 중앙정렬 */
+  .lnb ul {
+    padding: 0 24px;
+    list-style: none;
+    text-align: center;
+    margin: 0;
+  }
+  .lnb ul li {
+    padding: 0;
+    margin: 0;
+    position: relative;
+  }
+  .lnb ul li + li { margin-top: 16px; }
+  .lnb ul li a {
+    display: block;
+    padding: 4px 0;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    color: var(--gray-10);
+    cursor: pointer;
+    background: transparent;
+    transition: color 0.15s;
+    position: relative;
+  }
+  .lnb ul li a::before { content: none; }
+  .lnb ul li a:hover { color: var(--primary); }
+  /* Active = Mint700 text only (no bg, no left indicator — Figma mypage 정합) */
+  .lnb ul li.on a {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .lnb ul li.on::before { content: none; }
+  /* Logout = Gray04 muted + 작은 간격 */
+  .lnb ul li.log a {
+    color: var(--gray-05);
+    font-weight: 400;
+    font-size: 15px;
+  }
+  /* Badge */
+  .lnb ul li a .badge {
+    margin-left: 6px;
+    background: var(--danger);
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    vertical-align: middle;
+  }
+
+  /* Sub-label (학습 / 계정) hidden in mypage Figma 정합 = 별도 라벨 X (divider 만으로 구분) */
+  .lnb .menu-sub-label { display: none; }
+
+  /* ============ Main ============ */
+  .main { min-width: 0; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .main .page { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .breadcrumb a:hover { color: var(--primary-dark); }
+  .breadcrumb .sep { color: var(--dim); }
+  .breadcrumb .current { color: var(--text-strong); font-weight: 600; }
+
+  /* Page header (라이브 h3 32px 패턴) */
+  .page-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 32px;
+    flex-wrap: wrap; gap: 12px;
+    padding-top: 8px;
+  }
+  .page-head h1 {
+    font-size: 32px; font-weight: 900;
+    letter-spacing: -0.64px;
+    color: var(--text-strong);
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .page-head p {
+    font-size: 16px; font-weight: 400;
+    color: var(--muted);
+    letter-spacing: -0.32px;
+  }
+
+  /* ============ Common: card ============ */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+    gap: 8px; flex-wrap: wrap;
+  }
+  .card-head h3 {
+    font-size: 14.5px; color: var(--text-strong);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-head .view-all {
+    font-size: 12px; color: var(--muted); font-weight: 600;
+  }
+
+  /* ============ Button = 라이브 .btnTy1 / .btnTy2 정합 ============ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px;
+    padding: 0 20px;
+    height: 32px;
+    border-radius: 100px;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: -0.28px;
+    cursor: pointer; border: 2px solid transparent;
+    line-height: 1;
+    box-sizing: border-box;
+  }
+  /* .btnTy1 (검정 fill) */
+  .btn.primary {
+    background: var(--btn-primary-bg);
+    color: #FFFFFF;
+    border-color: var(--btn-primary-bg);
+  }
+  .btn.primary:hover { background: var(--btn-primary-bg-hover); border-color: var(--btn-primary-bg-hover); }
+  /* .btnTy2 (검정 outline) */
+  .btn.outline {
+    background: #FFFFFF; color: var(--text-strong);
+    border: 1px solid var(--text-strong);
+    height: 30px;
+  }
+  .btn.outline:hover { border-color: var(--btn-primary-bg-hover); color: var(--btn-primary-bg-hover); }
+  .btn.mint {
+    background: var(--primary); color: #FFFFFF;
+    border-color: var(--primary);
+  }
+  .btn.mint:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+  .btn.ghost {
+    background: transparent; color: var(--muted);
+    border: none;
+  }
+  .btn.ghost:hover { color: var(--text-strong); background: var(--bg-soft); }
+  .btn.lg {
+    height: 48px; padding: 0 28px; font-size: 15px;
+  }
+  .btn.sm {
+    height: 28px; padding: 0 14px; font-size: 12px;
+  }
+  .btn[disabled] {
+    border-color: var(--border)!important;
+    background: #FFFFFF!important; color: var(--border)!important;
+    cursor: not-allowed;
+  }
+
+  /* ============ Tag/Chip (라이브 .icoSym 정합 = 강좌 type) ============ */
+  .tag {
+    display: inline-flex; align-items: center;
+    font-size: 15px; font-weight: 700;
+    padding: 5px 8px 7px; border-radius: 6px;
+    letter-spacing: -0.3px;
+  }
+  .tag.mint { background: var(--mint-1); color: var(--mint-4); }
+  .tag.purple { background: #ECE0FE; color: #6D28D9; }
+  .tag.yellow { background: #FFF4D6; color: #B45309; }
+  .tag.blue { background: var(--accent-blue); color: var(--info-blue); }
+  .tag.gray {
+    background: var(--bg-soft); color: var(--muted);
+    font-size: 12px; padding: 2px 8px 3px; border-radius: 4px;
+    letter-spacing: 0;
+  }
+  .tag.red { background: #FFE0E0; color: var(--danger); }
+  .tag.green { background: #D5F5DE; color: #065F46; }
+
+  /* Compact tag = 상태 표시 (수강중·답변 대기 등) */
+  .tag.sm {
+    font-size: 12px; font-weight: 700;
+    padding: 2px 8px 3px; border-radius: 4px;
+    letter-spacing: 0;
+  }
+
+  /* ===================== Page: HOME (openpath.kr) ===================== */
+  .hero-banner {
+    background: linear-gradient(120deg, var(--primary-dark), var(--info));
+    color: #FFFFFF;
+    border-radius: 16px;
+    padding: 56px 48px;
+    margin-bottom: 32px;
+  }
+  .hero-banner h2 {
+    font-size: 32px; font-weight: 800;
+    margin-bottom: 8px; line-height: 1.3;
+  }
+  .hero-banner p {
+    font-size: 15px; opacity: 0.9;
+    margin-bottom: 24px;
+  }
+  .hero-banner .btn {
+    background: #FFFFFF; color: var(--primary-dark);
+    padding: 12px 28px; font-size: 14px;
+  }
+  .hero-banner .btn:hover { background: var(--bg-soft); }
+
+  .section-title {
+    font-size: 19px; font-weight: 800;
+    color: var(--text-strong);
+    margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: end;
+  }
+  .section-title .more {
+    font-size: 12px; color: var(--muted); font-weight: 600;
+    cursor: pointer;
+  }
+  .section-title .more:hover { color: var(--primary-dark); }
+
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .class-grid .card-class {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .class-grid .card-class:hover { transform: translateY(-2px); border-color: var(--primary); }
+  .class-grid .card-class .thumb {
+    aspect-ratio: 16/10;
+    background: linear-gradient(135deg, var(--accent-mint), var(--primary-soft));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+  }
+  .class-grid .card-class.distance .thumb { background: linear-gradient(135deg, var(--accent-purple), #C7D2FE); }
+  .class-grid .card-class.vod .thumb { background: linear-gradient(135deg, var(--accent-mint), var(--primary-soft)); }
+  .class-grid .card-class.meet .thumb { background: linear-gradient(135deg, var(--accent-yellow), #FCD34D); }
+  .class-grid .card-class .body { padding: 14px; }
+  .class-grid .card-class .body .tags { display: flex; gap: 4px; margin-bottom: 6px; }
+  .class-grid .card-class .body h4 {
+    font-size: 13.5px; color: var(--text-strong);
+    margin-bottom: 4px; line-height: 1.4;
+  }
+  .class-grid .card-class .body p { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  .class-grid .card-class .body .price {
+    font-size: 14px; font-weight: 800; color: var(--text-strong);
+  }
+  .class-grid .card-class .body .price .strike {
+    font-size: 11px; font-weight: 500;
+    color: var(--dim);
+    text-decoration: line-through;
+    margin-right: 4px;
+  }
+
+  /* ===================== Page: 대시보드 (마이페이지 home) ===================== */
+  /* ============ PageHero = Figma PageHero/Learner Portal/PC 정확 복제 ============ */
+  .page-hero {
+    background: var(--gray-10);
+    color: #FFFFFF;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 120px;
+  }
+  .page-hero-text { flex: 1; min-width: 0; }
+  .page-hero-text h1 {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  .page-hero-text p {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--gray-04);
+  }
+  .page-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 24px;
+    border: 1.5px solid var(--gray-05);
+    background: transparent;
+    color: #FFFFFF;
+    border-radius: 22px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .page-hero-cta:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: #FFFFFF;
+  }
+
+  .quick-stats {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .quick-stats .qstat {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+  .quick-stats .qstat strong { color: var(--text-strong); }
+  .quick-stats .qstat.warn strong { color: var(--warn-cta); }
+  .quick-stats .qstat.primary strong { color: var(--primary-dark); }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .kpi .icon-box {
+    width: 44px; height: 44px;
+    background: var(--accent-mint); color: var(--primary-dark);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .kpi.success .icon-box { background: var(--accent-green); color: #065F46; }
+  .kpi.warn .icon-box { background: var(--accent-yellow); color: #92400E; }
+  .kpi .text { display: flex; flex-direction: column; min-width: 0; }
+  .kpi .text .label { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .kpi .text .val {
+    font-size: 24px; font-weight: 800;
+    color: var(--text-strong); line-height: 1;
+  }
+  .kpi .text .val .unit {
+    font-size: 12px; font-weight: 600;
+    color: var(--muted); margin-left: 4px;
+  }
+
+  /* 학습 기록 (캘린더 + 통계) */
+  .study-record {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+  .study-record .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .study-record .head h3 {
+    font-size: 15px; color: var(--text-strong);
+  }
+  .seg {
+    display: flex; gap: 2px;
+    background: var(--border-soft);
+    border-radius: 7px; padding: 2px;
+  }
+  .seg button {
+    border: none; background: transparent;
+    padding: 6px 14px; border-radius: 5px;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+  }
+  .seg button.active {
+    background: #FFFFFF; color: var(--primary-dark);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  .study-record .body {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+  }
+  .record-stats { display: flex; flex-direction: column; gap: 12px; }
+  .record-stat {
+    background: linear-gradient(135deg, var(--primary-tint), #ECFDF5);
+    border: 1px solid var(--accent-mint);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .record-stat .label {
+    font-size: 11.5px; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .record-stat .val {
+    font-size: 24px; font-weight: 800;
+    color: var(--primary-dark); line-height: 1.1;
+  }
+  .record-stat .val .unit { font-size: 13px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+  .record-stat .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .calendar .cal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .calendar .cal-head h4 { font-size: 13.5px; color: var(--text-strong); }
+  .calendar .cal-head .nav { display: flex; gap: 4px; }
+  .calendar .cal-head .nav button {
+    width: 26px; height: 26px;
+    border: 1px solid var(--border); background: var(--surface);
+    border-radius: 6px; cursor: pointer;
+    font-size: 12px; color: var(--muted);
+  }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
+    max-width: 360px;
+  }
+  .cal-grid .dow {
+    text-align: center; font-size: 11px; font-weight: 700;
+    color: var(--muted); padding: 4px 0;
+  }
+  .cal-grid .day {
+    height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    font-size: 12px; color: var(--text);
+    border: 1px solid transparent;
+  }
+  .cal-grid .day.out { color: #D1D5DB; }
+  .cal-grid .day.has { background: var(--accent-mint); color: var(--primary-dark); font-weight: 700; }
+  .cal-grid .day.has.heavy { background: var(--primary); color: #FFFFFF; }
+  .cal-grid .day.today { border: 2px solid var(--primary); font-weight: 800; }
+
+  /* 수강 클래스 list (대시보드 + 수강 과목 공용) */
+  .hybrid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--gap);
+  }
+  .col-stack { display: flex; flex-direction: column; gap: var(--gap); min-width: 0; }
+
+  /* ★ Figma CourseCard 정확치 = radius 12 / border #D6D8DC / AccentBar 4px Mint06 / padding 24 */
+  .class-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 12px;
+    position: relative;
+    display: flex; gap: 24px; align-items: flex-start;
+    overflow: hidden;
+  }
+  .class-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--mint-06);
+    z-index: 1;
+  }
+  .class-card.distance::before { background: var(--mint-05); }
+  .class-card.offline::before { background: var(--gray-04); }
+  .class-card .thumb {
+    width: 158px; height: 158px;
+    background: linear-gradient(135deg, var(--mint-1), var(--mint-2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; flex-shrink: 0;
+    position: relative; overflow: hidden;
+  }
+  .class-card.distance .thumb { background: linear-gradient(135deg, var(--accent-purple), #C7D2FE); }
+  .class-card.offline .thumb { background: linear-gradient(135deg, var(--accent-yellow), #FCD34D); }
+  .class-card .body { flex: 1; min-width: 0; padding-left: 0; }
+  .class-card .body .tags { display: flex; gap: 6px; margin-bottom: 8px; }
+  /* .icoSym = mint 캡슐 라벨 (강좌 type) */
+  .class-card .body .ico-sym {
+    display: inline-flex; align-items: center;
+    font-size: 15px; font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--mint-4); /* #22b7b2 */
+    background: var(--mint-1); /* #d4f7f6 */
+    padding: 5px 8px 7px;
+    border-radius: 6px;
+  }
+  /* dl dt = 강좌명 20px 900 */
+  .class-card .body h4 {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.4px;
+    color: var(--text-strong);
+    margin-top: 8px;
+    margin-bottom: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  /* dl dd = meta 12px 500 #8a9095 */
+  .class-card .body .meta {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--muted-soft);
+    padding-top: 4px;
+    margin-bottom: 0;
+  }
+  /* .progress = padding-top 33px */
+  .class-card .body .progress-section {
+    padding-top: 33px;
+    width: 100%;
+  }
+  .class-card .body .progress-row {
+    display: flex; align-items: center; gap: 12px;
+    padding-top: 33px; flex-wrap: wrap;
+  }
+  /* 라이브 .mpClassList .box .progress .percent = h6 / bg #EDF0F2 / radius 10 */
+  .progress {
+    flex: 1; height: 6px;
+    background: var(--border-soft);
+    border-radius: 10px; overflow: hidden;
+    min-width: 200px;
+    margin-top: 0;
+  }
+  .progress .fill {
+    height: 100%;
+    background: var(--mint-5);
+    border-radius: 10px;
+  }
+  .class-card .body .pct {
+    font-size: 16px; font-weight: 900;
+    color: var(--primary-dark);
+    letter-spacing: -0.32px;
+  }
+  .class-card .body .progress-row .submeta {
+    font-size: 12px; font-weight: 500;
+    color: var(--muted-soft);
+    width: 100%;
+    margin-top: 4px;
+  }
+  .class-card .actions {
+    display: flex; flex-direction: column;
+    gap: 8px; flex-shrink: 0;
+    align-self: center;
+  }
+  .class-card .actions .btn { min-width: 132px; }
+
+  /* 알림 / 수료증 panel */
+  .panel-list .item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex; gap: 10px;
+  }
+  .panel-list .item:last-child { border-bottom: none; padding-bottom: 0; }
+  .panel-list .item:first-child { padding-top: 0; }
+  .panel-list .item .icon {
+    width: 32px; height: 32px;
+    background: var(--accent-blue); color: #1D4ED8;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .panel-list .item.qna .icon { background: var(--accent-mint); color: var(--primary-dark); }
+  .panel-list .item.assignment .icon { background: var(--accent-yellow); color: #92400E; }
+  .panel-list .item.notice .icon { background: var(--accent-purple); color: #5B21B6; }
+  .panel-list .item .body { flex: 1; min-width: 0; }
+  .panel-list .item .body h5 {
+    font-size: 12px; color: var(--text-strong); margin-bottom: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .panel-list .item .body p {
+    font-size: 11px; color: var(--muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .panel-list .item .time { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+
+  /* ===================== Page: 수강 과목 ===================== */
+  .tabs {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .tabs button {
+    background: transparent; border: none;
+    padding: 10px 16px;
+    font-size: 13px; font-weight: 600;
+    color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .tabs button:hover { color: var(--text-strong); }
+  .tabs button.active {
+    color: var(--primary-dark);
+    border-bottom-color: var(--primary);
+  }
+  .tabs button .count {
+    margin-left: 4px; font-size: 11px;
+    color: var(--muted); font-weight: 700;
+  }
+  .tabs button.active .count { color: var(--primary-dark); }
+
+  /* ===================== Page: 출결 / 성적 (표) ===================== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 12.5px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .data-table th {
+    background: var(--bg-soft);
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .data-table tbody tr:hover { background: var(--bg-soft); }
+  .data-table td.success { color: var(--success); font-weight: 700; }
+  .data-table td.warn { color: var(--warn-cta); font-weight: 700; }
+  .data-table td.danger { color: var(--danger); font-weight: 700; }
+
+  /* 수료증 카드 */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .cert-card {
+    background: linear-gradient(135deg, #FFFFFF, var(--primary-tint));
+    border: 1px solid var(--accent-mint);
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .cert-card .icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #FFFFFF;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+  .cert-card h4 {
+    font-size: 14.5px; color: var(--text-strong);
+    margin-bottom: 6px; line-height: 1.4;
+  }
+  .cert-card .meta {
+    font-size: 11.5px; color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .cert-card .grade {
+    font-size: 22px; font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 12px;
+  }
+
+  /* ===================== Page: 질의응답 ===================== */
+  .qna-list .qna-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .qna-list .qna-item:hover { border-color: var(--primary); }
+  .qna-list .qna-item .head {
+    display: flex; gap: 8px; align-items: center;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .qna-list .qna-item h4 {
+    font-size: 14px; color: var(--text-strong);
+    margin-bottom: 6px;
+  }
+  .qna-list .qna-item p {
+    font-size: 12px; color: var(--muted);
+    overflow: hidden; display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    margin-bottom: 8px;
+  }
+  .qna-list .qna-item .meta {
+    font-size: 11px; color: var(--muted);
+    display: flex; gap: 12px;
+  }
+
+  /* ===================== Page: 강의실 ===================== */
+  .player-wrap {
+    background: #000;
+    border-radius: 12px;
+    aspect-ratio: 16/9;
+    display: flex; align-items: center; justify-content: center;
+    color: #FFFFFF;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .player-wrap .play-icon { font-size: 56px; cursor: pointer; }
+  .player-wrap .controls {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 16px 20px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.8), transparent);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .player-wrap .controls .bar {
+    flex: 1; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .player-wrap .controls .bar .fill { height: 100%; background: var(--primary); width: 38%; }
+  .player-wrap .controls .time { font-size: 11px; opacity: 0.85; }
+
+  .lesson-info {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .lesson-info h2 {
+    font-size: 18px; color: var(--text-strong);
+    margin-bottom: 6px;
+  }
+  .lesson-info .lesson-meta {
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .chapter-list .chapter-item {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    font-size: 12.5px;
+  }
+  .chapter-list .chapter-item:hover { border-color: var(--primary); background: var(--primary-tint); }
+  .chapter-list .chapter-item.current { background: var(--primary-tint); border-color: var(--primary); font-weight: 700; color: var(--primary-dark); }
+  .chapter-list .chapter-item.done { color: var(--success); }
+  .chapter-list .chapter-item .ix {
+    width: 24px; color: var(--muted); font-weight: 700;
+    flex-shrink: 0; text-align: center;
+  }
+  .chapter-list .chapter-item .title { flex: 1; }
+  .chapter-list .chapter-item .dur { color: var(--muted); font-size: 11px; }
+
+  /* ===================== Page: 강의장 (원격훈련) ===================== */
+  .classroom-banner {
+    background: linear-gradient(120deg, #5B21B6, var(--info));
+    color: #FFFFFF;
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+  }
+  .classroom-banner .text { flex: 1; min-width: 220px; }
+  .classroom-banner .text .tags { display: flex; gap: 6px; margin-bottom: 8px; }
+  .classroom-banner .text .tags .tag {
+    background: rgba(255,255,255,0.18); color: #FFFFFF;
+  }
+  .classroom-banner .text h2 { font-size: 22px; margin-bottom: 4px; }
+  .classroom-banner .text p { font-size: 12.5px; opacity: 0.88; }
+  .classroom-banner .meta-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 14px; min-width: 360px;
+  }
+  .classroom-banner .meta-grid .item .label {
+    font-size: 10.5px; opacity: 0.7; margin-bottom: 2px;
+  }
+  .classroom-banner .meta-grid .item .val {
+    font-size: 15px; font-weight: 800;
+  }
+
+  /* 강의장 5 탭 */
+  .classroom-tabs {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+    background: var(--surface);
+    border-radius: 10px 10px 0 0;
+    padding: 4px 4px 0;
+    overflow-x: auto;
+  }
+  .classroom-tabs button {
+    background: transparent; border: none;
+    padding: 12px 18px;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .classroom-tabs button:hover { color: var(--text-strong); }
+  .classroom-tabs button.active {
+    color: var(--primary-dark);
+    border-bottom-color: var(--primary);
+    background: var(--primary-tint);
+    border-radius: 8px 8px 0 0;
+  }
+  .classroom-tabs button .badge {
+    background: var(--danger); color: #FFFFFF;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 999px;
+    min-width: 16px; text-align: center;
+  }
+
+  .room-panel { display: none; }
+  .room-panel.active { display: block; animation: fadeIn 0.2s ease; }
+
+  /* 노동부 cap progress */
+  .cap-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .cap-card .head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+  }
+  .cap-card .head h3 {
+    font-size: 14px; color: var(--text-strong);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cap-card .head .count {
+    font-size: 18px; font-weight: 800; color: var(--primary-dark);
+  }
+  .cap-card .head .count .max { color: var(--muted); font-size: 13px; font-weight: 600; }
+  .cap-card .bar-bg {
+    height: 10px;
+    background: var(--border-soft);
+    border-radius: 5px; overflow: hidden;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .cap-card .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--info));
+  }
+  .cap-card .bar-marks {
+    display: flex; justify-content: space-between;
+    font-size: 10px; color: var(--muted);
+  }
+  .cap-card .desc {
+    font-size: 11.5px; color: var(--muted);
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--warn-bg);
+    border-left: 3px solid var(--warn-cta);
+    border-radius: 6px;
+  }
+  .cap-card .desc strong { color: #78350F; }
+
+  /* 학습 현황 KPI (4개) */
+  .kpi-row-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  /* 차시별 출결 grid */
+  .session-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+  }
+  .session-grid .session {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    text-align: center;
+    background: var(--surface);
+    font-size: 11.5px;
+  }
+  .session-grid .session.done {
+    background: var(--accent-green); border-color: var(--success);
+    color: #065F46; font-weight: 700;
+  }
+  .session-grid .session.current {
+    background: var(--primary-tint); border-color: var(--primary);
+    color: var(--primary-dark); font-weight: 700;
+  }
+  .session-grid .session.locked {
+    background: var(--bg-soft); color: var(--dim);
+    cursor: not-allowed;
+  }
+  .session-grid .session.unmet {
+    background: var(--accent-red); border-color: var(--danger);
+    color: #B91C1C; font-weight: 700;
+  }
+  .session-grid .session .ix {
+    font-size: 14px; font-weight: 800; margin-bottom: 2px;
+  }
+  .session-grid .session .label {
+    font-size: 10px; opacity: 0.85;
+  }
+
+  /* 과제·시험·공지 list */
+  .room-list .room-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    display: flex; gap: 14px; align-items: center;
+  }
+  .room-list .room-item:hover { border-color: var(--primary); }
+  .room-list .room-item .icon-box {
+    width: 40px; height: 40px;
+    background: var(--accent-yellow); color: #92400E;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .room-list .room-item.exam .icon-box { background: var(--accent-red); color: #B91C1C; }
+  .room-list .room-item.notice .icon-box { background: var(--accent-purple); color: #5B21B6; }
+  .room-list .room-item .body { flex: 1; min-width: 0; }
+  .room-list .room-item .body .top {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+  }
+  .room-list .room-item .body h4 {
+    font-size: 14px; color: var(--text-strong);
+  }
+  .room-list .room-item .body .meta {
+    font-size: 11.5px; color: var(--muted); margin-top: 2px;
+  }
+  .room-list .room-item .status {
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .room-list .room-item .status.warn { color: var(--warn-cta); }
+  .room-list .room-item .status.done { color: var(--success); }
+  .room-list .room-item .status.danger { color: var(--danger); }
+
+  /* CAPCHA modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.6);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-backdrop .modal {
+    background: #FFFFFF;
+    border-radius: 14px;
+    width: 100%; max-width: 420px;
+    padding: 24px;
+  }
+  .modal .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .modal .head h3 {
+    font-size: 16px; color: var(--text-strong);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modal .head button {
+    background: transparent; border: none;
+    font-size: 20px; color: var(--muted); cursor: pointer;
+  }
+  .modal .desc {
+    font-size: 12.5px; color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .modal .capcha-img {
+    background: linear-gradient(135deg, #1E3A8A, #6366F1);
+    color: #FFFFFF;
+    border-radius: 8px;
+    padding: 28px;
+    text-align: center;
+    font-size: 24px; font-weight: 900;
+    letter-spacing: 8px;
+    margin-bottom: 12px;
+    user-select: none;
+    font-style: italic;
+    text-decoration: line-through;
+  }
+  .modal input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .modal .actions {
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+
+  /* 강의장 플레이어 (원격훈련 = VOD 분리) */
+  .room-player-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 18px;
+  }
+
+  /* ===================== Page: 강의장 v2 (메디 default = 별도 강의장 풀폭 페이지) ===================== */
+  .classroom-page {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    min-height: calc(100vh - var(--gnb-h));
+    background: #FFFFFF;
+  }
+
+  /* 좌측 = 강의장 자체 sidebar */
+  .classroom-side {
+    background: #FAFAFB;
+    border-right: 1px solid var(--border);
+    padding: 32px 28px;
+    overflow-y: auto;
+    position: sticky;
+    top: var(--gnb-h);
+    height: calc(100vh - var(--gnb-h));
+  }
+  .classroom-side .exit-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted);
+    font-size: 13px; font-weight: 700;
+    margin-bottom: 24px;
+    cursor: pointer;
+  }
+  .classroom-side .exit-link:hover { color: var(--text-strong); }
+  .classroom-side .course-info {
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .classroom-side .course-info .ico-sym {
+    display: inline-flex;
+    font-size: 13px; font-weight: 700;
+    color: var(--mint-4); background: var(--mint-1);
+    padding: 4px 8px 5px; border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .classroom-side .course-info h2 {
+    font-size: 20px; font-weight: 900;
+    letter-spacing: -0.4px;
+    line-height: 1.35;
+    color: var(--text-strong);
+    margin-bottom: 8px;
+  }
+  .classroom-side .course-info .meta {
+    font-size: 12px; color: var(--muted-soft);
+    line-height: 1.5;
+  }
+  .classroom-side .course-info .meta strong { color: var(--text); }
+
+  /* 진도 mini */
+  .classroom-side .progress-mini {
+    margin-bottom: 24px;
+  }
+  .classroom-side .progress-mini .row {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--muted-soft);
+    margin-bottom: 6px;
+  }
+  .classroom-side .progress-mini .row strong {
+    font-size: 16px; font-weight: 900;
+    color: var(--primary-dark);
+  }
+  .classroom-side .progress-mini .bar {
+    height: 6px; background: #edf0f2;
+    border-radius: 10px; overflow: hidden;
+  }
+  .classroom-side .progress-mini .bar .fill {
+    height: 100%; background: var(--mint-4);
+    border-radius: 10px;
+  }
+
+  /* 강의장 좌측 5탭 */
+  .classroom-side .room-side-tabs {
+    display: flex; gap: 4px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+    padding: 3px;
+    margin-bottom: 18px;
+  }
+  .classroom-side .room-side-tabs button {
+    flex: 1;
+    background: transparent; border: none;
+    padding: 7px 0;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: -0.23px;
+  }
+  .classroom-side .room-side-tabs button.active {
+    background: #FFFFFF;
+    color: var(--text-strong);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* 좌측 차시 list */
+  .classroom-side .week-group {
+    margin-bottom: 18px;
+  }
+  .classroom-side .week-group .week-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .classroom-side .week-group .week-title .week-pct {
+    font-size: 11px; color: var(--muted);
+    font-weight: 500;
+  }
+  .classroom-side .chapter-item-sm {
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .classroom-side .chapter-item-sm:hover { background: #FFFFFF; }
+  .classroom-side .chapter-item-sm.current {
+    background: var(--mint-1); color: var(--primary-dark);
+    font-weight: 700;
+  }
+  .classroom-side .chapter-item-sm.done { color: var(--muted); }
+  .classroom-side .chapter-item-sm.done .check {
+    color: var(--mint-5);
+  }
+  .classroom-side .chapter-item-sm .check {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 12px;
+  }
+  .classroom-side .chapter-item-sm .title-sm {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .classroom-side .chapter-item-sm .dur-sm {
+    font-size: 11px; color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* 우측 메인 */
+  .classroom-main {
+    padding: 32px 40px 60px;
+    max-width: 1280px;
+    margin: 0;
+  }
+  .classroom-main .top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .classroom-main .top-bar .lesson-title {
+    font-size: 22px; font-weight: 900;
+    letter-spacing: -0.44px;
+    color: var(--text-strong);
+  }
+  .classroom-main .top-bar .lesson-meta {
+    font-size: 13px; color: var(--muted-soft);
+    margin-top: 4px;
+  }
+  .classroom-main .top-bar .actions {
+    display: flex; gap: 8px;
+  }
+
+  /* ===================== VOD 플레이어 = openpath.kr 정합 ===================== */
+  /* ★ VOD topbar = 풀스크린 몰입 mode minimal header */
+  body[data-area="player"] {
+    background: #0E0E0F;
+  }
+  body[data-area="player"] .opp-gnb { display: none; }
+  body[data-area="player"] .main { width: 100%; min-width: 0; }
+  body[data-area="player"] section[data-page="player"] {
+    max-width: 1752px;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .vod-topbar {
+    background: #0E0E0F;
+    color: #FFFFFF;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    border-bottom: 1px solid #2a2a2e;
+  }
+  .vod-topbar-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+  .vod-topbar-back {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .vod-topbar-back:hover { background: rgba(255,255,255,0.16); }
+  .vod-topbar-title {
+    flex: 1; min-width: 0;
+  }
+  .vod-topbar-title h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .vod-topbar-pct {
+    font-size: 12px;
+    color: var(--gray-04);
+    letter-spacing: -0.02em;
+  }
+  .vod-topbar-exit {
+    background: rgba(255,255,255,0.06);
+    color: #FFFFFF;
+    border: 1px solid rgba(255,255,255,0.16);
+    padding: 9px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: -0.02em;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .vod-topbar-exit:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.32);
+  }
+
+  .vod-player-sec {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 0;
+    background: #000;
+    border-radius: 0;
+    overflow: hidden;
+    min-height: calc(100vh - 73px);
+  }
+  .vod-media-box {
+    background: #1a1a1c;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .vod-chapter-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px;
+    background: #1a1a1c;
+    border-bottom: 1px solid #2a2a2e;
+  }
+  .vod-current-title {
+    font-size: 16px; font-weight: 800;
+    color: #fff;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    flex: 1; min-width: 0;
+  }
+  .vod-btn-prevnext { display: flex; gap: 4px; flex-shrink: 0; margin-left: 16px; }
+  .vod-btn-prevnext button {
+    background: rgba(255,255,255,0.1);
+    color: #fff; border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+  }
+  .vod-btn-prevnext button:hover { background: rgba(255,255,255,0.2); }
+  .vod-video {
+    aspect-ratio: 16/9;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    flex: 1;
+  }
+  .vod-play-icon {
+    font-size: 64px; color: #fff; cursor: pointer;
+    opacity: 0.6;
+  }
+  .vod-play-icon:hover { opacity: 1; }
+  .vod-controls {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 20px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
+    display: flex; align-items: center; gap: 14px;
+    color: #fff;
+  }
+  .vod-controls .vod-bar {
+    flex: 1; height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .vod-controls .vod-bar .fill {
+    height: 100%;
+    background: var(--mint-3);
+    width: 38%;
+  }
+  .vod-controls .vod-time { font-size: 11.5px; opacity: 0.9; }
+  .vod-controls span:not(.vod-bar) { font-size: 13px; cursor: pointer; opacity: 0.85; }
+  .vod-controls span:hover { opacity: 1; }
+
+  /* 우측 sidebar */
+  .vod-cnts {
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+  }
+  .vod-tab {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-soft);
+  }
+  .vod-tab-link {
+    flex: 1;
+    text-align: center;
+    padding: 14px 0;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .vod-tab-link:hover { color: var(--text-strong); }
+  .vod-tab-link.on {
+    color: var(--text-strong);
+    background: var(--surface);
+    border-bottom-color: var(--primary);
+  }
+  .vod-panel {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+  }
+
+  /* vodStudyBox */
+  .vod-study-box { padding: 0; }
+  .vod-all-study {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-soft);
+    position: relative;
+  }
+  .vod-all-study dl dt {
+    font-size: 14px; font-weight: 800;
+    color: var(--text-strong);
+    margin-bottom: 4px;
+    padding-right: 56px;
+  }
+  .vod-all-study dl dd {
+    font-size: 11.5px; color: var(--muted);
+  }
+  .vod-all-study .vod-btn-annou {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px; font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .vod-all-study .vod-btn-annou:hover {
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+    border-color: var(--primary);
+  }
+  .vod-percent-box {
+    margin-top: 14px;
+  }
+  .vod-percent-box .vod-percent-tit {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .vod-percent-box .vod-percent-tit p {
+    font-size: 12.5px; color: var(--muted);
+  }
+  .vod-percent-box .vod-percent-tit p em {
+    font-size: 14px; font-weight: 800;
+    color: var(--primary-dark);
+    font-style: normal;
+    margin-left: 4px;
+  }
+  .vod-percent-box .vod-percent-tit span {
+    font-size: 11px; color: var(--muted-soft);
+  }
+  .vod-percent-box .vod-bar-bg {
+    height: 6px;
+    background: var(--border-soft);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .vod-percent-box .vod-bar-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 3px;
+  }
+
+  /* Part / Chapter list */
+  .vod-part { border-bottom: 1px solid var(--border-soft); }
+  .vod-part-head {
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-strong);
+  }
+  .vod-part-head:hover { background: var(--bg-soft); }
+  .vod-part-head .ix {
+    color: var(--primary-dark);
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .vod-part-head .title { flex: 1; }
+  .vod-part-head .pct {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .vod-part-head .fold {
+    font-size: 18px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 16px;
+    text-align: center;
+  }
+  .vod-part-list {
+    background: var(--bg-soft);
+    padding: 6px 0 10px;
+  }
+  .vod-part.fold .vod-part-list { display: none; }
+  .vod-chapter {
+    padding: 10px 20px 10px 44px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .vod-chapter:hover { background: var(--primary-tint); }
+  .vod-chapter.done { color: var(--muted); }
+  .vod-chapter.done .ix { color: var(--mint-5); }
+  .vod-chapter.active {
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+  .vod-chapter .ix {
+    width: 14px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .vod-chapter .title {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .vod-chapter .dur {
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* QnA panel */
+  .vod-qna-box { padding: 16px 20px; }
+  .vod-qna-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .vod-qna-filter {
+    display: flex; gap: 4px;
+    background: var(--bg-soft);
+    border-radius: 7px;
+    padding: 2px;
+  }
+  .vod-qna-filter button {
+    background: transparent; border: none;
+    padding: 6px 12px; border-radius: 5px;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--muted); cursor: pointer;
+  }
+  .vod-qna-filter button.active {
+    background: var(--surface); color: var(--text-strong);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .vod-qna-filter button .cnt {
+    margin-left: 2px;
+    color: var(--muted-soft);
+    font-weight: 600;
+  }
+  .vod-qna-list .vod-qna-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+  }
+  .vod-qna-list .vod-qna-item:last-child { border-bottom: none; }
+  .vod-qna-list .vod-qna-item:hover h5 { color: var(--primary-dark); }
+  .vod-qna-list .vod-qna-meta {
+    display: flex; gap: 6px; margin-bottom: 6px;
+  }
+  .vod-qna-tag {
+    font-size: 10.5px; font-weight: 700;
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+    padding: 2px 6px; border-radius: 3px;
+  }
+  .vod-qna-state {
+    font-size: 10.5px; font-weight: 700;
+    padding: 2px 6px; border-radius: 3px;
+  }
+  .vod-qna-state.confirm { background: #D5F5DE; color: #065F46; }
+  .vod-qna-state.ing { background: var(--accent-yellow); color: #B45309; }
+  .vod-qna-list .vod-qna-item h5 {
+    font-size: 13px; font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 4px;
+  }
+  .vod-qna-list .vod-qna-item p {
+    font-size: 11.5px; color: var(--muted);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    margin-bottom: 6px;
+  }
+  .vod-qna-foot {
+    font-size: 10.5px; color: var(--muted-soft);
+  }
+
+  /* ===================== 학습 기록 = 주간 / 연간 view ===================== */
+  .study-view { display: none; }
+  .study-view.active { display: grid; }
+
+  /* 주간 = 7 day bar chart */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    max-width: 100%;
+    align-items: end;
+  }
+  .week-grid .week-day {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    padding: 8px 4px;
+    border-radius: 8px;
+  }
+  .week-grid .week-day.today {
+    background: var(--primary-tint);
+  }
+  .week-grid .week-day .dow {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+  }
+  .week-grid .week-day.today .dow { color: var(--primary-dark); }
+  .week-grid .week-day .bar {
+    height: 80px; width: 100%; max-width: 32px;
+    background: var(--border-soft);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+  .week-grid .week-day .bar .fill {
+    width: 100%;
+    background: var(--mint-3);
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s;
+  }
+  .week-grid .week-day .dur {
+    font-size: 10.5px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* 연간 = 12 month block grid */
+  .year-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .year-grid .month-block {
+    padding: 12px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    text-align: center;
+  }
+  .year-grid .month-block.current {
+    background: var(--primary-tint);
+    border-color: var(--primary);
+  }
+  .year-grid .month-block .mname {
+    font-size: 12px; font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 8px;
+  }
+  .year-grid .month-block .mdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+  .year-grid .month-block .mdays .md {
+    aspect-ratio: 1;
+    background: var(--border-soft);
+    border-radius: 2px;
+  }
+  .year-grid .month-block .mdays .md.l1 { background: #B7EBE9; }
+  .year-grid .month-block .mdays .md.l2 { background: var(--mint-2); }
+  .year-grid .month-block .mdays .md.l3 { background: var(--mint-3); }
+  .year-grid .month-block .mdays .md.l4 { background: var(--mint-5); }
+  .year-grid .month-block .mhrs {
+    font-size: 11.5px; font-weight: 700;
+    color: var(--primary-dark);
+  }
+
+  .year-legend {
+    display: flex; align-items: center; gap: 4px;
+    margin-top: 12px;
+    font-size: 11px; color: var(--muted);
+    justify-content: center;
+  }
+  .year-legend .md {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    background: var(--border-soft);
+  }
+  .year-legend .md.l1 { background: #B7EBE9; }
+  .year-legend .md.l2 { background: var(--mint-2); }
+  .year-legend .md.l3 { background: var(--mint-3); }
+  .year-legend .md.l4 { background: var(--mint-5); }
+
+  /* ===================== Class card stat row (원격훈련) ===================== */
+  .class-card .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding-top: 16px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .class-card .stat-row .stat {
+    text-align: center;
+  }
+  .class-card .stat-row .stat .lab {
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .class-card .stat-row .stat .val {
+    font-size: 16px; font-weight: 900;
+    color: var(--text-strong);
+    letter-spacing: -0.32px;
+  }
+  .class-card .stat-row .stat.warn .val { color: var(--warn-cta); }
+  .class-card .stat-row .stat.danger .val { color: var(--danger); }
+  .class-card .stat-row .stat.success .val { color: var(--primary-dark); }
+  .class-card .stat-row .stat .val .unit {
+    font-size: 11px; font-weight: 600;
+    color: var(--muted); margin-left: 2px;
+  }
+
+  /* A08 본문 텍스트 링크 (신청 상품 = 온라인 강의 수강중 = studyLinkCd≠'000') */
+  .class-card .link-confirm {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--mint-07);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    letter-spacing: -0.02em;
+  }
+  .class-card .link-confirm:hover { color: var(--mint-08); }
+
+  /* Schedule-only meta (세미나·오프라인) */
+  .class-card .schedule-block {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+    display: flex; gap: 12px; align-items: center;
+    flex-wrap: wrap;
+  }
+  .class-card .schedule-block .schedule-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .class-card .schedule-block .schedule-text {
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .class-card .schedule-block .schedule-text strong {
+    color: var(--text-strong);
+    font-weight: 700;
+  }
+
+  /* ===================== Page: 회원 정보 (Figma Mypage/PC 정합 = 카드 박스화) ===================== */
+  .my-info-manage {
+    width: 100%;
+    position: relative;
+    padding: 32px 40px;
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  .my-info-manage + .my-info-manage {
+    border-top: 1px solid var(--border);
+  }
+  .my-info-manage .titF20 {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ECEEF0;
+    color: var(--text-strong);
+  }
+  .my-info-manage .titF20.none {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  .my-info-manage .form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .my-info-manage .form.row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .my-info-manage .form .info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .my-info-manage .form .gp {
+    display: flex;
+    align-items: baseline;
+  }
+  .my-info-manage .form .gp h5 {
+    width: 80px;
+    margin-right: 32px;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--muted);
+    padding-bottom: 0;
+    flex-shrink: 0;
+  }
+  .my-info-manage .form .gp .input {
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    color: var(--text-strong);
+    background: none;
+    padding: 0;
+    height: auto;
+    line-height: 1.5;
+    border: none;
+    width: auto;
+  }
+  .my-info-manage .img { display: none; }
+  .my-info-manage .btn-manage {
+    position: absolute;
+    right: 40px;
+    top: 36px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .my-info-manage .btn-manage:hover { color: var(--primary-dark); text-decoration: underline; }
+  .my-info-manage.not .titF20 { color: var(--border); }
+  .my-info-manage.not .btn-manage {
+    color: var(--border);
+    pointer-events: none;
+  }
+  .btn-mem-out {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 24px 0 0 8px;
+    color: var(--gray-05);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+  }
+  .btn-mem-out:hover { color: var(--gray-07); }
+
+  /* ===================== Page: 주문/결제 (openpath.kr .payList 정확 복제 = 그리드 카드 338×166) ===================== */
+  .order-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(338px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .order-list .order-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    min-height: 166px;
+    position: relative;
+    display: block;
+  }
+  .order-list .order-item h4 {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    margin-bottom: 0;
+    overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .order-list .order-item .order-meta {
+    padding-top: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-05);
+    letter-spacing: -0.02em;
+  }
+  .order-list .order-item .order-meta .sep {
+    color: var(--gray-05);
+    padding: 0 4px;
+  }
+  .order-list .order-item .order-meta .state.success { color: var(--mint-07); font-weight: 700; }
+  .order-list .order-item .order-meta .state.warn { color: var(--warn-cta); font-weight: 700; }
+  .order-list .order-item .order-meta .state.danger { color: var(--gray-05); font-weight: 700; }
+  /* .bt = 하단 절대 위치 버튼 영역 */
+  .order-list .order-item .order-actions {
+    position: absolute;
+    left: 40px;
+    bottom: 36px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  /* 라이브 .btnReceipt / .btnDay / .btnRefund = 텍스트 버튼 (배경 없음) */
+  .order-list .order-item .btn-receipt,
+  .order-list .order-item .btn-day,
+  .order-list .order-item .btn-refund {
+    display: inline-block;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+  }
+  .order-list .order-item .btn-receipt { color: var(--text-strong); }
+  .order-list .order-item .btn-receipt:hover { color: var(--gray-07); }
+  .order-list .order-item .btn-day { color: var(--mint-07); padding-left: 6px; }
+  .order-list .order-item .btn-day:hover { color: var(--mint-08); }
+  .order-list .order-item .btn-refund {
+    position: absolute;
+    right: 40px;
+    bottom: 0;
+    color: var(--gray-05);
+    bottom: 36px;
+    right: 40px;
+    left: auto;
+  }
+  .order-list .order-item .btn-refund:hover { color: var(--gray-07); }
+
+  /* ===================== Page: 쿠폰 (openpath.kr .entryCoupon + .myCouponList 정확 복제) ===================== */
+  /* .entryCoupon = 검정 top border 2px + 그레이 bottom 1px + 가로 form */
+  .entry-coupon {
+    border-top: 2px solid var(--gray-10);
+    border-bottom: 1px solid var(--border);
+    padding: 38px 0;
+    margin-top: 24px;
+  }
+  .entry-coupon dl {
+    display: flex;
+    align-items: center;
+  }
+  .entry-coupon dl dt {
+    width: 160px;
+    height: 54px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin-right: 24px;
+    display: flex;
+    align-items: center;
+  }
+  .entry-coupon dl dd {
+    flex: 1;
+    position: relative;
+  }
+  .entry-coupon dl dd .input-wrap {
+    position: relative;
+  }
+  .entry-coupon dl dd input {
+    width: 100%;
+    height: 54px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+    border: none;
+    padding: 0 80px 0 16px;
+    font-size: 14px;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+  }
+  .entry-coupon dl dd input::placeholder { color: var(--muted); }
+  .entry-coupon dl dd .btn-overlap {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--mint-07);
+    cursor: pointer;
+    padding: 0;
+  }
+  .entry-coupon dl dd .btn-overlap.off { color: var(--border); }
+
+  /* .myCouponList = 가로형 카드 420×240 / 좌 cnt + 우 dashed border D-day 144 */
+  .my-coupon-list { padding-top: 64px; }
+  .my-coupon-list h4 {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin-bottom: 0;
+  }
+  .my-coupon-list ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .my-coupon-list ul li {
+    display: flex;
+    min-height: 240px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .my-coupon-list ul li .cnt {
+    padding: 36px 40px;
+    flex: 1;
+    padding-right: 160px;
+  }
+  .my-coupon-list ul li .ico-sym {
+    font-weight: 700;
+    line-height: 1.45;
+    font-size: 15px;
+    height: 32px;
+    display: inline-flex;
+    padding: 0 8px;
+    letter-spacing: -0.02em;
+    align-items: center;
+    border-radius: 6px;
+    background: var(--mint-01);
+    color: var(--mint-06);
+  }
+  .my-coupon-list ul li p {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    padding-top: 10px;
+    word-break: keep-all;
+    color: var(--text-strong);
+  }
+  .my-coupon-list ul li sup {
+    background: var(--danger);
+    width: 6px;
+    height: 6px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: top;
+    position: relative;
+    top: 6px;
+  }
+  .my-coupon-list ul li .reg-date {
+    position: absolute;
+    left: 40px;
+    bottom: 34px;
+    color: var(--gray-05);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .my-coupon-list ul li .date {
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-align: center;
+    width: 144px;
+    height: 100%;
+    border-left: 2px dashed var(--border);
+    display: flex;
+    font-size: 18px;
+    font-weight: 700;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-strong);
+    line-height: 1.35;
+  }
+  .my-coupon-list ul li .date.danger { color: var(--danger); }
+
+  /* ===================== Page: 1:1 문의 (openpath.kr .qnaTop + .qnaList 정확 복제) ===================== */
+  /* .qnaTop = 흰 banner 107h / radius 16 / border #D6D8DC */
+  .qna-top {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    height: 107px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    margin-bottom: 64px;
+    margin-top: 24px;
+  }
+  .qna-top p {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+  }
+  .qna-top a {
+    color: var(--mint-07);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+  }
+  .qna-top a:hover { color: var(--mint-08); }
+
+  /* .qnaListSec .subH4 = 20/900 */
+  .qna-list-sec .subH4 {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    padding-bottom: 32px;
+    color: var(--text-strong);
+  }
+  .qna-list-sec .qna-tab {
+    padding-bottom: 24px;
+    display: flex;
+    gap: 24px;
+  }
+  .qna-list-sec .qna-tab a {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--gray-05);
+    cursor: pointer;
+  }
+  .qna-list-sec .qna-tab a.on,
+  .qna-list-sec .qna-tab a:hover {
+    color: var(--text-strong);
+  }
+
+  /* .qnaList table = 검정 thead border + #EDF0F2 row + Mint 답변완료 */
+  .qna-list table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  .qna-list table thead th {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    border-top: 1px solid var(--text-mid);
+    border-bottom: 1px solid var(--text-mid);
+    padding: 14px 0;
+    color: var(--text-strong);
+    text-align: center;
+  }
+  .qna-list table .left { text-align: left; }
+  .qna-list table tbody td {
+    font-size: 14px;
+    line-height: 1.45;
+    border-bottom: 1px solid var(--border-soft);
+    padding: 24px 0;
+    color: var(--gray-07);
+    text-align: center;
+  }
+  .qna-list table tbody .state { color: var(--gray-05); font-weight: 700; }
+  .qna-list table tbody .state.confirm { color: var(--mint-07); }
+  .qna-list table tbody .tit a {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .qna-list table tbody .tit a:hover { color: var(--mint-07); }
+  .qna-list table tbody sup {
+    background: var(--danger);
+    width: 6px;
+    height: 6px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-right: 4px;
+    vertical-align: top;
+    position: relative;
+    top: 4px;
+  }
+  /* Pagination = Figma mypage 정합 */
+  .qna-pagi {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 32px;
+  }
+  .qna-pagi a {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-07);
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: -0.02em;
+  }
+  .qna-pagi a:hover { background: var(--bg-soft); }
+  .qna-pagi a.active {
+    color: var(--text-strong);
+    font-weight: 700;
+  }
+  .qna-pagi a.prev,
+  .qna-pagi a.next { color: var(--gray-05); }
+
+  /* legacy data-table fallback */
+  .data-table td.warn { color: var(--warn-cta); font-weight: 700; }
+  .data-table td.success { color: var(--success); font-weight: 700; }
+
+  /* ============ Mobile bottom tab ============ */
+  .mobile-tab-bar { display: none; }
+
+  /* ============ Responsive = openpath.kr 라이브 breakpoint ============ */
+  /* 라이브 = 1535 / 1392 / 1180 / 961 / 720 */
+
+  @media (max-width: 1535px) {
+    :root { --container-pad: 28px; }
+  }
+
+  @media (max-width: 1392px) {
+    :root { --container-pad: 24px; --gap: 16px; }
+    .layout { gap: 32px; }
+    .class-card { padding: 32px; gap: 20px; }
+    .class-card .thumb { width: 140px; height: 140px; font-size: 42px; }
+    .class-card .body h4 { font-size: 18px; }
+    .cert-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 1180px) {
+    :root { --lnb-w: 240px; }
+    .layout { gap: 24px; }
+    .lnb { padding: 40px 20px; }
+    .lnb .profile-img { width: 88px; height: 88px; font-size: 32px; }
+    .lnb .name { font-size: 22px; padding-top: 18px; }
+    .lnb .info { font-size: 14px; padding-top: 18px; }
+    .lnb ul li a { font-size: 16px; }
+    .class-grid { grid-template-columns: repeat(3, 1fr); }
+    .hybrid { grid-template-columns: 1fr 280px; gap: 16px; }
+    .page-head h1 { font-size: 28px; }
+    .study-record .body { grid-template-columns: 1fr; gap: 20px; }
+    .calendar .cal-grid { max-width: 100%; }
+    .kpi-row-4 { grid-template-columns: repeat(2, 1fr); }
+    .room-player-layout { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 1180px) {
+    .classroom-page { grid-template-columns: 280px 1fr; }
+    .classroom-main { padding: 24px 28px 60px; }
+  }
+
+  @media (max-width: 961px) {
+    .classroom-page { grid-template-columns: 1fr; min-height: auto; }
+    .classroom-side {
+      position: static; height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 24px 20px;
+    }
+    .classroom-main { padding: 20px 20px 60px; }
+    :root { --container-pad: 20px; --gnb-h: 64px; }
+    .opp-gnb nav.primary { display: none; }
+    .opp-gnb .menu-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      background: transparent; border: none;
+      cursor: pointer; color: var(--text-strong);
+      font-size: 22px;
+    }
+    .layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding-top: 24px;
+    }
+    .lnb {
+      display: none;
+      position: fixed;
+      top: var(--gnb-h); left: 0; bottom: 0;
+      width: 280px;
+      padding: 32px 24px;
+      background: #FFFFFF;
+      border-right: 1px solid var(--border);
+      z-index: 80;
+      overflow-y: auto;
+    }
+    .lnb.open { display: block; }
+    .lnb-overlay {
+      position: fixed; top: var(--gnb-h);
+      left: 0; right: 0; bottom: 0;
+      background: rgba(25,25,25,0.4);
+      z-index: 70;
+      display: none;
+    }
+    .lnb-overlay.open { display: block; }
+
+    .class-grid { grid-template-columns: repeat(2, 1fr); }
+    .hybrid { grid-template-columns: 1fr; }
+    .hero-banner { padding: 36px 24px; }
+    .hero-banner h2 { font-size: 24px; }
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .class-card { padding: 24px; gap: 16px; }
+    .class-card .thumb { width: 120px; height: 120px; font-size: 36px; }
+    .class-card .body h4 { font-size: 17px; }
+
+    .classroom-banner { padding: 18px 20px; }
+    .classroom-banner .text h2 { font-size: 18px; }
+    .classroom-banner .meta-grid { min-width: 0; grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 720px) {
+    :root { --container-pad: 16px; --gnb-h: 56px; }
+    .opp-gnb-inner { gap: 12px; }
+    .opp-gnb .logo { font-size: 18px; }
+    .opp-gnb .cta-mypage span.text { display: none; }
+    .opp-gnb .cta-mypage { padding: 8px 12px; }
+    .layout { padding-top: 16px; padding-bottom: 90px; }
+
+    .page-head h1 { font-size: 22px; }
+    .page-head p { font-size: 13px; }
+    .page-head { margin-bottom: 20px; }
+
+    .class-grid { grid-template-columns: 1fr; }
+    .cert-grid { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: 1fr; gap: 8px; }
+    .kpi-row-4 { grid-template-columns: 1fr; }
+
+    .class-card { flex-direction: column; align-items: stretch; padding: 20px; }
+    .class-card .thumb { width: 100%; height: 180px; }
+    .class-card .actions { flex-direction: row; }
+    .class-card .actions .btn { flex: 1; min-width: 0; }
+    .vod-player-sec { grid-template-columns: 1fr; min-height: auto; }
+    .vod-cnts { border-left: none; border-top: 1px solid var(--border); }
+    .vod-panel { max-height: 500px; }
+
+    .classroom-banner { flex-direction: column; align-items: flex-start; }
+    .classroom-banner .meta-grid { width: 100%; gap: 10px; }
+    .classroom-tabs button { padding: 10px 14px; font-size: 12px; }
+    .room-list .room-item { flex-wrap: wrap; }
+    .room-list .room-item .body { min-width: 100%; }
+
+    .study-record { padding: 20px 16px; }
+    .calendar .cal-grid .day { height: 32px; font-size: 11px; }
+
+    .mobile-tab-bar {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid var(--border);
+      padding: 8px 0;
+      z-index: 100;
+      justify-content: space-around;
+    }
+    .mobile-tab-bar .tab {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 2px;
+      font-size: 10px;
+      color: var(--muted); flex: 1;
+      cursor: pointer;
+    }
+    .mobile-tab-bar .tab .icon { font-size: 18px; }
+    .mobile-tab-bar .tab.active { color: var(--text-strong); font-weight: 700; }
+  }
+
+  @media (max-width: 374px) {
+    .cal-grid .day { font-size: 10px; height: 28px; }
+  }
+
+  /* ============================================================ */
+  /* ★ 풀페이지 "내 강의장" 모드 = body[data-area="portal"] override */
+  /* ============================================================ */
+
+  /* portal 모드 = openpath.kr GNB 숨김 → 자체 minimal 헤더 표시 */
+  body[data-area="portal"] .opp-gnb { display: none; }
+  body[data-area="portal"] .my-classroom-header { display: flex; }
+
+  /* portal 모드 = layout padding top 줄임 (자체 헤더 64h 따로) */
+  body[data-area="portal"] .layout { padding-top: 32px; }
+
+  /* My Classroom Header (자체 minimal 헤더) */
+  .my-classroom-header {
+    display: none; /* default = 숨김 / portal mode 만 표시 */
+    position: sticky; top: 0;
+    z-index: 99;
+    height: 64px;
+    background: var(--gray-10);
+    color: #FFFFFF;
+    padding: 0 32px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--gray-09);
+  }
+  .mc-header-left {
+    display: flex; align-items: center; gap: 24px;
+  }
+  .mc-header-logo {
+    font-family: 'Mark Pro', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #FFFFFF;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .mc-header-divider {
+    width: 1px; height: 18px;
+    background: var(--gray-07);
+  }
+  .mc-header-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .mc-header-right {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .mc-header-search,
+  .mc-header-alarm {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent;
+    color: var(--gray-04);
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    border: none;
+    font-size: 16px;
+    transition: all 0.15s;
+  }
+  .mc-header-search:hover,
+  .mc-header-alarm:hover { background: var(--gray-09); color: #FFFFFF; }
+  .mc-header-alarm .dot {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 2px solid var(--gray-10);
+  }
+  .mc-header-avatar {
+    width: 32px; height: 32px;
+    background: var(--mint-05);
+    color: #FFFFFF;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .mc-header-exit {
+    margin-left: 4px;
+    padding: 9px 16px;
+    background: transparent;
+    color: var(--gray-04);
+    border: 1px solid var(--gray-07);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: -0.02em;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .mc-header-exit:hover {
+    background: var(--gray-09);
+    color: #FFFFFF;
+    border-color: var(--gray-05);
+  }
+
+  /* ============================================================ */
+  /* ★ 풀페이지 LNB = 검정 Gray10 (Figma 99_컴포넌트 Sidebar/Learner Portal/PC 정합) */
+  /* ============================================================ */
+  body[data-area="portal"] .lnb {
+    width: 240px;
+    background: var(--gray-10);
+    color: #FFFFFF;
+    padding: 0 0 16px;
+    text-align: left;
+    border-radius: 12px;
+    box-shadow: none;
+    min-height: 600px;
+    position: sticky;
+    top: calc(64px + 24px); /* 자체 헤더 64h + 24 margin */
+  }
+  /* LogoBox 안 보임 (자체 헤더에 OPENPATH 있음) */
+  body[data-area="portal"] .lnb-logobox { display: none; }
+
+  /* UserBlock = 검정 Gray09 배경 / radius 8 / 가로형 */
+  body[data-area="portal"] .lnb-userblock {
+    margin: 24px 16px 0;
+    padding: 16px;
+    background: var(--gray-09);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+  body[data-area="portal"] .lnb-avatar {
+    width: 48px; height: 48px;
+    background: var(--mint-05);
+    border-radius: 50%;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+  body[data-area="portal"] .lnb-avatar::after { display: none; }
+  body[data-area="portal"] .lnb-user-info {
+    flex: 1; min-width: 0;
+    text-align: left;
+  }
+  body[data-area="portal"] .lnb-user-name {
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    text-align: left;
+  }
+  body[data-area="portal"] .lnb-user-role {
+    color: var(--gray-04);
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  body[data-area="portal"] .lnb-user-meta { display: none; }
+
+  /* Divider = Gray09 1px solid (검정 배경에 맞춤. dashed X) */
+  body[data-area="portal"] .lnb hr.divider {
+    border-top: 1px solid var(--gray-09);
+    margin: 20px 16px;
+  }
+
+  /* Sub-label 표시 = 학습 / 계정 (검정 모드 = 가독성 OK) */
+  body[data-area="portal"] .lnb .menu-sub-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gray-05);
+    text-align: left;
+    padding: 0 24px 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* 메뉴 list */
+  body[data-area="portal"] .lnb ul {
+    padding: 0 16px;
+    list-style: none;
+    text-align: left;
+    margin: 0;
+  }
+  body[data-area="portal"] .lnb ul li {
+    margin: 0;
+    position: relative;
+  }
+  body[data-area="portal"] .lnb ul li + li { margin-top: 2px; }
+  body[data-area="portal"] .lnb ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--gray-03);
+    cursor: pointer;
+    border-radius: 8px;
+    background: transparent;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  body[data-area="portal"] .lnb ul li a::before { content: none; }
+  body[data-area="portal"] .lnb ul li a:hover {
+    color: #FFFFFF;
+    background: rgba(255,255,255,0.04);
+  }
+  /* Active = Gray09 bg + radius 8 + Mint05 indicator 3px left + white bold text */
+  body[data-area="portal"] .lnb ul li.on a {
+    background: var(--gray-09);
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+  body[data-area="portal"] .lnb ul li.on::before {
+    content: '';
+    position: absolute;
+    left: 4px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 18px;
+    background: var(--mint-05);
+    border-radius: 2px;
+  }
+  /* Logout = Gray05 muted */
+  body[data-area="portal"] .lnb ul li.log a {
+    color: var(--gray-05);
+    font-size: 13px;
+  }
+  body[data-area="portal"] .lnb ul li a .badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+  }
+
+  /* player + classroom 모드 = 자체 헤더 안 보임 */
+  body[data-area="player"] .my-classroom-header,
+  body[data-area="classroom"] .my-classroom-header { display: none; }
+
+  /* public 모드 = openpath.kr GNB 그대로 + 자체 헤더 안 보임 */
+  body[data-area="public"] .my-classroom-header { display: none; }
+</style>
+</head>
+<body data-area="public">
+
+<!-- ★ Demo banner = 풀페이지 "내 강의장" 데모 안내 -->
+<div class="demo-banner">
+  <div class="demo-banner-inner">
+    <span class="chip">FULLPAGE v1</span>
+    <strong>풀페이지 "내 강의장" 데모 (메디 default)</strong>
+    <span>오픈패스 GNB ↔ "내 강의장" 진입 시 자체 헤더 + 검정 LNB 풀페이지 전환 · 계정 메뉴 = LNB 하단 통합</span>
+    <div class="links">
+      <a onclick="goto('home')">openpath.kr 홈</a>
+      <a onclick="goto('dashboard')">내 강의장 → 대시보드</a>
+      <a onclick="goto('courses')">수강 과목</a>
+      <a onclick="goto('classroom')">원격 강의장</a>
+      <a onclick="goto('player')">VOD 플레이어 (몰입 모드)</a>
+      <a onclick="goto('account')">계정 메뉴 (LNB 하단)</a>
+    </div>
+  </div>
+</div>
+
+<!-- ★ openpath.kr GNB -->
+<header class="opp-gnb">
+  <div class="opp-gnb-inner">
+    <button class="menu-btn" onclick="toggleLnb()">☰</button>
+    <a class="logo" onclick="goto('home')">OPENPATH<span class="dot">.</span></a>
+
+    <nav class="primary">
+      <a data-nav="class-list" onclick="goto('class-list')">클래스</a>
+      <a onclick="alert('노하우 = 데모 외 페이지')">노하우</a>
+      <a onclick="alert('멤버십 = 데모 외 페이지')">멤버십</a>
+      <a onclick="alert('이벤트 = 데모 외 페이지')">이벤트</a>
+      <a onclick="alert('비즈니스 = 데모 외 페이지')">비즈니스</a>
+    </nav>
+
+    <div class="util">
+      <button class="icon-btn" aria-label="검색" onclick="alert('검색')">🔍</button>
+      <button class="icon-btn" aria-label="알림" onclick="alert('알림 패널')">
+        🔔<span class="dot"></span>
+      </button>
+      <!-- ★ 내 강의장 = 풀페이지 진입점 (= openpath.kr GNB 사라지고 자체 헤더 + 검정 LNB 활성) -->
+      <button class="cta-mypage" onclick="goto('dashboard')">
+        🎓<span class="text">내 강의장</span>
+      </button>
+
+      <div class="profile-wrap" id="profileWrap">
+        <div class="avatar" onclick="toggleProfile()">관</div>
+        <div class="dropdown">
+          <div class="header">
+            <h5>관자님</h5>
+            <p>openpath@duotone.io</p>
+          </div>
+          <a onclick="goto('dashboard'); closeProfile();">🎓 대시보드</a>
+          <a onclick="goto('account'); closeProfile();">👤 개인 정보 관리</a>
+          <a onclick="goto('order'); closeProfile();">🧾 결제/환불 내역</a>
+          <a onclick="goto('coupon'); closeProfile();">🎁 내 쿠폰</a>
+          <a onclick="goto('qna-help'); closeProfile();">✉️ 1:1 문의</a>
+          <a onclick="alert('내 게시물'); closeProfile();">📝 내 게시물</a>
+          <div class="divider"></div>
+          <a class="logout" onclick="alert('로그아웃'); closeProfile();">↪ 로그아웃</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ★ My Classroom Header (자체 minimal 헤더 = 풀페이지 "내 강의장" 진입 시 표시) -->
+<header class="my-classroom-header">
+  <div class="mc-header-left">
+    <span class="mc-header-logo" onclick="goto('home')">OPENPATH</span>
+    <div class="mc-header-divider"></div>
+    <span class="mc-header-title">내 강의장</span>
+  </div>
+  <div class="mc-header-right">
+    <button class="mc-header-search" aria-label="검색" onclick="alert('검색')">🔍</button>
+    <button class="mc-header-alarm" aria-label="알림" onclick="alert('알림 패널')">🔔<span class="dot"></span></button>
+    <div class="mc-header-avatar" onclick="alert('프로필')">관</div>
+    <button class="mc-header-exit" onclick="goto('home')">‹ 포털 나가기</button>
+  </div>
+</header>
+
+<!-- ★ Layout -->
+<div class="lnb-overlay" id="lnbOverlay" onclick="closeLnb()"></div>
+
+<div class="layout">
+
+  <!-- ★ LNB = 풀페이지 "내 강의장" 모드 (검정 Gray10 / Figma 99_컴포넌트 Sidebar/Learner Portal/PC 정합) -->
+  <!-- 학습 메뉴 + dashed divider + 계정 메뉴 + 로그아웃 = 풀페이지 안에서 모든 사용자 흐름 처리 -->
+  <aside class="lnb" id="lnb">
+    <!-- LogoBox (자체 헤더에 로고 있음 = 숨김) -->
+    <div class="lnb-logobox">
+      <div class="lnb-logo">OPENPATH</div>
+      <div class="lnb-sub">내 강의장</div>
+    </div>
+
+    <!-- UserBlock = 가로형 (검정 Gray09 박스 / 48×48 avatar) -->
+    <div class="lnb-userblock">
+      <div class="lnb-avatar">관</div>
+      <div class="lnb-user-info">
+        <div class="lnb-user-name">관자님</div>
+        <div class="lnb-user-role">openpath@duotone.io</div>
+        <div class="lnb-user-meta">010.1234.5678</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 학습 메뉴 (메디 default 5개) -->
+    <p class="menu-sub-label">학습</p>
+    <ul>
+      <li data-nav="dashboard" onclick="goto('dashboard')"><a>대시보드</a></li>
+      <li data-nav="courses" onclick="goto('courses')"><a>수강 과목</a></li>
+      <li data-nav="attendance" onclick="goto('attendance')"><a>출결 현황</a></li>
+      <li data-nav="grades" onclick="goto('grades')"><a>성적·수료증</a></li>
+      <li data-nav="qna" onclick="goto('qna')"><a>질의응답<span class="badge">2</span></a></li>
+    </ul>
+
+    <hr class="divider">
+
+    <!-- 계정 메뉴 (mypage 4탭 = 풀페이지 안에서 처리 = 사용자 페이지 이탈 X) -->
+    <p class="menu-sub-label">계정</p>
+    <ul>
+      <li data-nav="account" onclick="goto('account')"><a>개인 정보 관리</a></li>
+      <li data-nav="order" onclick="goto('order')"><a>결제/환불 내역</a></li>
+      <li data-nav="coupon" onclick="goto('coupon')"><a>내 쿠폰</a></li>
+      <li data-nav="qna-help" onclick="goto('qna-help')"><a>1:1 문의</a></li>
+    </ul>
+
+    <hr class="divider">
+
+    <ul>
+      <li class="log" onclick="alert('로그아웃')"><a>로그아웃</a></li>
+    </ul>
+  </aside>
+
+  <!-- ★ Main -->
+  <main class="main">
+
+    <!-- ============ Page: HOME (openpath.kr 메인) ============ -->
+    <section class="page active" data-page="home">
+      <div class="hero-banner">
+        <h2>OPENPATH에서<br>당신의 디자인 커리어를 키우세요</h2>
+        <p>VOD · 오프라인 · 원격훈련 · 멤버십 · B2B 패키지까지</p>
+        <button class="btn" onclick="goto('class-list')">강좌 둘러보기 →</button>
+      </div>
+
+      <div class="section-title">
+        <span>🔥 인기 강좌</span>
+        <span class="more" onclick="goto('class-list')">전체 보기 →</span>
+      </div>
+      <div class="class-grid">
+        <div class="card-class distance" onclick="goto('lecture-detail')">
+          <div class="thumb">🤖</div>
+          <div class="body">
+            <div class="tags"><span class="tag purple">원격훈련</span></div>
+            <h4>AI 활용 기초 - 머신러닝 입문</h4>
+            <p>10주 · 노동부 환급</p>
+            <div class="price"><span class="strike">540,000원</span>299,000원</div>
+          </div>
+        </div>
+        <div class="card-class vod" onclick="goto('lecture-detail')">
+          <div class="thumb">📊</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span></div>
+            <h4>리더십과 조직관리</h4>
+            <p>28 차시 · 평생 시청</p>
+            <div class="price">189,000원</div>
+          </div>
+        </div>
+        <div class="card-class meet" onclick="goto('lecture-detail')">
+          <div class="thumb">💼</div>
+          <div class="body">
+            <div class="tags"><span class="tag yellow">오프라인</span></div>
+            <h4>디자인 시스템 정규 과정</h4>
+            <p>8회차 · 강남 캠퍼스</p>
+            <div class="price">890,000원</div>
+          </div>
+        </div>
+        <div class="card-class vod" onclick="goto('lecture-detail')">
+          <div class="thumb">🎨</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span></div>
+            <h4>Figma 마스터 클래스</h4>
+            <p>42 차시 · 평생 시청</p>
+            <div class="price">219,000원</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📅 진행 중 이벤트</span></div>
+      <div class="card" style="background: linear-gradient(120deg, var(--primary-tint), #ECFDF5); border-color: var(--accent-mint);">
+        <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 200px;">
+            <h3 style="color: var(--primary-dark); margin-bottom: 6px;">🎁 6월 신규 회원 30% 할인</h3>
+            <p style="color: var(--muted); font-size: 12.5px;">2026.06.01 ~ 06.30 · VOD 강좌 전 품목 적용</p>
+          </div>
+          <button class="btn primary">쿠폰 받기 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 클래스 카탈로그 ============ -->
+    <section class="page" data-page="class-list">
+      <div class="page-head">
+        <div><h1>클래스</h1><p>VOD · 오프라인 · 원격훈련 강좌 카탈로그</p></div>
+      </div>
+
+      <div class="tabs">
+        <button class="active">전체 <span class="count">42</span></button>
+        <button>VOD <span class="count">23</span></button>
+        <button>오프라인 <span class="count">12</span></button>
+        <button>원격훈련 <span class="count">7</span></button>
+      </div>
+
+      <div class="class-grid">
+        <div class="card-class distance" onclick="goto('lecture-detail')">
+          <div class="thumb">🤖</div>
+          <div class="body">
+            <div class="tags"><span class="tag purple">원격훈련</span><span class="tag green">노동부</span></div>
+            <h4>AI 활용 기초 - 머신러닝 입문</h4>
+            <p>10주 · D-12</p>
+            <div class="price">299,000원</div>
+          </div>
+        </div>
+        <div class="card-class vod" onclick="goto('lecture-detail')">
+          <div class="thumb">📊</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span></div>
+            <h4>리더십과 조직관리</h4>
+            <p>28 차시</p>
+            <div class="price">189,000원</div>
+          </div>
+        </div>
+        <div class="card-class meet" onclick="goto('lecture-detail')">
+          <div class="thumb">💼</div>
+          <div class="body">
+            <div class="tags"><span class="tag yellow">오프라인</span></div>
+            <h4>디자인 시스템 정규 과정</h4>
+            <p>8 회차</p>
+            <div class="price">890,000원</div>
+          </div>
+        </div>
+        <div class="card-class vod" onclick="goto('lecture-detail')">
+          <div class="thumb">🎨</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span></div>
+            <h4>Figma 마스터 클래스</h4>
+            <p>42 차시</p>
+            <div class="price">219,000원</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 강의 상세 ============ -->
+    <section class="page" data-page="lecture-detail">
+      <div class="breadcrumb">
+        <a onclick="goto('class-list')">클래스</a>
+        <span class="sep">›</span>
+        <span class="current">강의 상세</span>
+      </div>
+      <div class="page-head">
+        <div>
+          <div style="margin-bottom: 8px;"><span class="tag purple">원격훈련</span></div>
+          <h1>AI 활용 기초 - 머신러닝 입문</h1>
+          <p>김지연 강사 · 10주 과정 · 노동부 환급</p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span style="font-size: 22px; font-weight: 800; color: var(--text-strong);">299,000원</span>
+          <button class="btn primary lg" onclick="alert('결제 진입')">수강 신청</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>강의 소개</h3>
+        <p style="font-size: 13px; color: var(--muted); margin: 12px 0;">
+          머신러닝의 기초부터 실무 적용까지. 10주 동안 진행되는 노동부 환급 원격훈련 과정.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 18px;">
+          <div><strong style="color: var(--text-strong);">📅 기간</strong><br><span style="font-size: 12px; color: var(--muted);">2026.05.06 ~ 07.20</span></div>
+          <div><strong style="color: var(--text-strong);">🎯 수료 기준</strong><br><span style="font-size: 12px; color: var(--muted);">진도 80% + 평가 60점</span></div>
+          <div><strong style="color: var(--text-strong);">💰 환급</strong><br><span style="font-size: 12px; color: var(--muted);">근로자 100% (요건 충족 시)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 대시보드 (대시보드 홈) ============ -->
+    <section class="page" data-page="dashboard">
+      <!-- ★ PageHero = Figma PageHero/Learner Portal/PC 정확 복제 (CTA 제거) -->
+      <div class="page-hero">
+        <div class="page-hero-text">
+          <h1>관자님, 안녕하세요!</h1>
+          <p>오늘도 즐거운 학습 되세요.</p>
+        </div>
+      </div>
+
+      <div class="quick-stats">
+        <span class="qstat primary">📚 <strong>3</strong>개 수강중</span>
+        <span class="qstat warn">⭐ 멤버십 <strong>D-7</strong></span>
+        <span class="qstat">🔥 <strong>7일</strong> 연속 학습</span>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="icon-box">📘</div>
+          <div class="text"><span class="label">수강중</span><span class="val">3<span class="unit">개</span></span></div>
+        </div>
+        <div class="kpi success">
+          <div class="icon-box">🏆</div>
+          <div class="text"><span class="label">수료 완료</span><span class="val">5<span class="unit">개</span></span></div>
+        </div>
+        <div class="kpi warn">
+          <div class="icon-box">⏳</div>
+          <div class="text"><span class="label">미시작</span><span class="val">1<span class="unit">개</span></span></div>
+        </div>
+      </div>
+
+      <div class="study-record">
+        <div class="head">
+          <h3>📊 학습 기록</h3>
+          <div class="seg" id="studyRecordSeg">
+            <button data-period="week" onclick="switchStudyPeriod('week')">주간</button>
+            <button data-period="month" class="active" onclick="switchStudyPeriod('month')">월간</button>
+            <button data-period="year" onclick="switchStudyPeriod('year')">연간</button>
+          </div>
+        </div>
+
+        <!-- View 1: 주간 -->
+        <div class="body study-view" data-period="week" style="display: none;">
+          <div class="record-stats">
+            <div class="record-stat">
+              <div class="label">📅 이번 주 학습일</div>
+              <div class="val">5<span class="unit">/ 7일</span></div>
+              <div class="sub">월요일부터 5일 연속 학습 중</div>
+            </div>
+            <div class="record-stat">
+              <div class="label">⏱ 이번 주 학습 시간</div>
+              <div class="val">4<span class="unit">시간 23분</span></div>
+              <div class="sub">지난 주 대비 +52분</div>
+            </div>
+          </div>
+          <div class="calendar">
+            <div class="cal-head">
+              <h4>2026년 6월 1주차 (6.7 - 6.13)</h4>
+              <div class="nav"><button onclick="alert('이전 주')">‹</button><button onclick="alert('다음 주')">›</button></div>
+            </div>
+            <div class="week-grid">
+              <div class="week-day"><div class="dow">일 6.7</div><div class="bar"><div class="fill" style="height: 0%;"></div></div><div class="dur">—</div></div>
+              <div class="week-day"><div class="dow">월 6.8</div><div class="bar"><div class="fill" style="height: 60%; background: var(--mint-2);"></div></div><div class="dur">42분</div></div>
+              <div class="week-day"><div class="dow">화 6.9</div><div class="bar"><div class="fill" style="height: 85%; background: var(--mint-5);"></div></div><div class="dur">1h 12분</div></div>
+              <div class="week-day"><div class="dow">수 6.10</div><div class="bar"><div class="fill" style="height: 45%; background: var(--mint-3);"></div></div><div class="dur">38분</div></div>
+              <div class="week-day"><div class="dow">목 6.11</div><div class="bar"><div class="fill" style="height: 70%; background: var(--mint-3);"></div></div><div class="dur">52분</div></div>
+              <div class="week-day today"><div class="dow">금 6.12</div><div class="bar"><div class="fill" style="height: 30%; background: var(--mint-2);"></div></div><div class="dur">19분</div></div>
+              <div class="week-day"><div class="dow">토 6.13</div><div class="bar"><div class="fill" style="height: 0%;"></div></div><div class="dur">—</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 2: 월간 (default) -->
+        <div class="body study-view active" data-period="month">
+          <div class="record-stats">
+            <div class="record-stat">
+              <div class="label">📅 이번 달 학습일</div>
+              <div class="val">8<span class="unit">/ 30일</span></div>
+              <div class="sub">최근 7일 중 5일 학습</div>
+            </div>
+            <div class="record-stat">
+              <div class="label">⏱ 이번 달 학습 시간</div>
+              <div class="val">12<span class="unit">시간 11분</span></div>
+              <div class="sub">지난 달 대비 +2시간 18분</div>
+            </div>
+          </div>
+          <div class="calendar">
+            <div class="cal-head">
+              <h4>2026년 6월</h4>
+              <div class="nav"><button onclick="alert('이전 달')">‹</button><button onclick="alert('다음 달')">›</button></div>
+            </div>
+            <div class="cal-grid">
+              <div class="dow">일</div><div class="dow">월</div><div class="dow">화</div><div class="dow">수</div><div class="dow">목</div><div class="dow">금</div><div class="dow">토</div>
+              <div class="day out">31</div><div class="day has">1</div><div class="day has heavy">2</div><div class="day">3</div><div class="day has">4</div><div class="day has heavy">5</div><div class="day">6</div>
+              <div class="day">7</div><div class="day has">8</div><div class="day today has heavy">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div>
+              <div class="day">14</div><div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div>
+              <div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div>
+              <div class="day">28</div><div class="day">29</div><div class="day">30</div><div class="day out">1</div><div class="day out">2</div><div class="day out">3</div><div class="day out">4</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View 3: 연간 -->
+        <div class="body study-view" data-period="year" style="display: none;">
+          <div class="record-stats">
+            <div class="record-stat">
+              <div class="label">📅 올해 학습일</div>
+              <div class="val">68<span class="unit">/ 161일</span></div>
+              <div class="sub">평균 주 3.1일 학습</div>
+            </div>
+            <div class="record-stat">
+              <div class="label">⏱ 올해 학습 시간</div>
+              <div class="val">142<span class="unit">시간 18분</span></div>
+              <div class="sub">월 평균 23시간 43분</div>
+            </div>
+          </div>
+          <div class="calendar">
+            <div class="cal-head">
+              <h4>2026년</h4>
+              <div class="nav"><button onclick="alert('이전 해')">‹</button><button onclick="alert('다음 해')">›</button></div>
+            </div>
+            <div class="year-grid">
+              <div class="month-block"><div class="mname">1월</div><div class="mdays"><div class="md l2"></div><div class="md l3"></div><div class="md l0"></div><div class="md l4"></div><div class="md l2"></div><div class="md l1"></div><div class="md l3"></div></div><div class="mhrs">14h</div></div>
+              <div class="month-block"><div class="mname">2월</div><div class="mdays"><div class="md l3"></div><div class="md l4"></div><div class="md l2"></div><div class="md l3"></div><div class="md l1"></div><div class="md l2"></div><div class="md l4"></div></div><div class="mhrs">18h</div></div>
+              <div class="month-block"><div class="mname">3월</div><div class="mdays"><div class="md l1"></div><div class="md l2"></div><div class="md l3"></div><div class="md l1"></div><div class="md l2"></div><div class="md l4"></div><div class="md l3"></div></div><div class="mhrs">22h</div></div>
+              <div class="month-block"><div class="mname">4월</div><div class="mdays"><div class="md l4"></div><div class="md l3"></div><div class="md l2"></div><div class="md l3"></div><div class="md l4"></div><div class="md l2"></div><div class="md l3"></div></div><div class="mhrs">28h</div></div>
+              <div class="month-block"><div class="mname">5월</div><div class="mdays"><div class="md l3"></div><div class="md l4"></div><div class="md l4"></div><div class="md l3"></div><div class="md l2"></div><div class="md l3"></div><div class="md l4"></div></div><div class="mhrs">31h</div></div>
+              <div class="month-block current"><div class="mname">6월 (진행)</div><div class="mdays"><div class="md l2"></div><div class="md l3"></div><div class="md l1"></div><div class="md l2"></div><div class="md l3"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">12h</div></div>
+              <div class="month-block"><div class="mname">7월</div><div class="mdays"><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">—</div></div>
+              <div class="month-block"><div class="mname">8월</div><div class="mdays"><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">—</div></div>
+              <div class="month-block"><div class="mname">9월</div><div class="mdays"><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">—</div></div>
+              <div class="month-block"><div class="mname">10월</div><div class="mdays"><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">—</div></div>
+              <div class="month-block"><div class="mname">11월</div><div class="mdays"><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">—</div></div>
+              <div class="month-block"><div class="mname">12월</div><div class="mdays"><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div><div class="md l0"></div></div><div class="mhrs">—</div></div>
+            </div>
+            <div class="year-legend">
+              <span>학습량</span>
+              <div class="md l0"></div>
+              <div class="md l1"></div>
+              <div class="md l2"></div>
+              <div class="md l3"></div>
+              <div class="md l4"></div>
+              <span>적음 → 많음</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hybrid">
+        <div class="col-stack">
+          <div class="card-head" style="margin: 8px 0;">
+            <h3>수강 중 클래스 <span class="tag mint">3</span></h3>
+            <a class="view-all" onclick="goto('courses')">전체 보기 ›</a>
+          </div>
+
+          <!-- 원격훈련 R02 = 메디 강의장 (별도 풀스크린). stat row (진도/출석/점수) -->
+          <div class="class-card distance">
+            <div class="thumb">🤖</div>
+            <div class="body">
+              <div class="tags"><span class="tag purple">원격훈련</span><span class="tag mint sm">수강중</span></div>
+              <h4>AI 활용 기초 - 머신러닝 입문</h4>
+              <div class="meta">2026.05.06 ~ 2026.07.20 · 5주차 D-12</div>
+              <div class="progress-row">
+                <div class="progress"><div class="fill" style="width:37%"></div></div>
+                <span class="pct">37%</span>
+              </div>
+              <div class="stat-row">
+                <div class="stat"><div class="lab">진도</div><div class="val">37<span class="unit">%</span></div></div>
+                <div class="stat success"><div class="lab">출석</div><div class="val">11<span class="unit">/ 30차시</span></div></div>
+                <div class="stat"><div class="lab">평가 점수</div><div class="val">—</div></div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="goto('classroom')">강의실 입장</button>
+            </div>
+          </div>
+
+          <!-- VOD V01 = 수강중 (sCd=100, studyRate<100). 라벨 = '수강하기' (라이브 Contains.js 정합) -->
+          <div class="class-card">
+            <div class="thumb">📊</div>
+            <div class="body">
+              <div class="tags"><span class="tag mint">VOD</span><span class="tag mint sm">수강중</span></div>
+              <h4>리더십과 조직관리</h4>
+              <div class="meta">2026.03.21 ~ 2026.09.21 (무제한 시청)</div>
+              <div class="progress-row">
+                <div class="progress"><div class="fill" style="width:42%"></div></div>
+                <span class="pct">42%</span>
+                <span class="submeta">5파트 · 28챕터 · 총 4시간 42분</span>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="goto('player')">수강하기</button>
+              <button class="btn outline">후기 작성</button>
+            </div>
+          </div>
+
+          <!-- 신청 상품 A08 = 온라인 클래스 수강중 -->
+          <div class="class-card">
+            <div class="thumb">💻</div>
+            <div class="body">
+              <div class="tags"><span class="tag blue">온라인 클래스</span><span class="tag mint sm">수강중</span></div>
+              <h4>UX 리서치 실전 워크숍</h4>
+              <div class="meta">2026.06.01 ~ 2026.06.30 · 4/8회차 · 매주 토 14:00</div>
+              <a class="link-confirm" onclick="alert('Zoom 강의실 링크 열기')">온라인 강의실 링크 확인</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-stack">
+          <div class="card">
+            <div class="card-head"><h3>🔔 알림 <span class="tag red">3</span></h3><a class="view-all">전체 ›</a></div>
+            <div class="panel-list">
+              <div class="item qna">
+                <div class="icon">💬</div>
+                <div class="body">
+                  <h5>내 질문에 답변이 달렸어요</h5>
+                  <p>AI 활용 기초 · 김지연 강사</p>
+                </div>
+                <span class="time">오늘</span>
+              </div>
+              <div class="item assignment">
+                <div class="icon">📝</div>
+                <div class="body">
+                  <h5>과제 마감 3일 남았어요</h5>
+                  <p>3주차 AI 활용 과제 #3</p>
+                </div>
+                <span class="time">2시간 전</span>
+              </div>
+              <div class="item notice">
+                <div class="icon">📢</div>
+                <div class="body">
+                  <h5>새 공지가 등록되었어요</h5>
+                  <p>5주차 강의 일정 변경</p>
+                </div>
+                <span class="time">어제</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3>🏆 최근 수료증</h3><a class="view-all" onclick="goto('grades')">전체 ›</a></div>
+            <div class="panel-list">
+              <div class="item">
+                <div class="icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;">🏅</div>
+                <div class="body">
+                  <h5>조직행동과 인사관리 (A+)</h5>
+                  <p>2026.05.30 수료</p>
+                </div>
+              </div>
+              <div class="item">
+                <div class="icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff;">🏅</div>
+                <div class="body">
+                  <h5>Python 프로그래밍 기초 (A)</h5>
+                  <p>2026.05.12 수료</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 수강 과목 ============ -->
+    <section class="page" data-page="courses">
+      <div class="page-head">
+        <div><h1>수강 과목</h1><p>현재 수강 중인 모든 클래스</p></div>
+      </div>
+
+      <div class="tabs">
+        <button class="active">전체 <span class="count">9</span></button>
+        <button>수강중 <span class="count">3</span></button>
+        <button>수강예정 <span class="count">1</span></button>
+        <button>수강완료 <span class="count">5</span></button>
+        <button>심사대기 <span class="count">0</span></button>
+        <button>판매종료 <span class="count">0</span></button>
+      </div>
+
+      <div class="col-stack">
+        <!-- R02 원격훈련 수강중 = 강의장 입장 (메디 강의장) -->
+        <div class="class-card distance">
+          <div class="thumb">🤖</div>
+          <div class="body">
+            <div class="tags"><span class="tag purple">원격훈련</span><span class="tag mint sm">수강중</span></div>
+            <h4>AI 활용 기초 - 머신러닝 입문</h4>
+            <div class="meta">2026.05.06 ~ 2026.07.20 · 5주차 D-12</div>
+            <div class="progress-row">
+              <div class="progress"><div class="fill" style="width:37%"></div></div>
+              <span class="pct">37%</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat"><div class="lab">진도</div><div class="val">37<span class="unit">%</span></div></div>
+              <div class="stat success"><div class="lab">출석</div><div class="val">11<span class="unit">/ 30차시</span></div></div>
+              <div class="stat"><div class="lab">평가 점수</div><div class="val">—</div></div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="goto('classroom')">강의실 입장</button>
+          </div>
+        </div>
+
+        <!-- V01 VOD 수강중 (sCd=100, studyRate<100). 라벨 = '수강하기' (Contains.js 정합) -->
+        <div class="class-card">
+          <div class="thumb">📊</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span><span class="tag mint sm">수강중</span></div>
+            <h4>리더십과 조직관리</h4>
+            <div class="meta">2026.03.21 ~ 2026.09.21 (무제한 시청)</div>
+            <div class="progress-row">
+              <div class="progress"><div class="fill" style="width:42%"></div></div>
+              <span class="pct">42%</span>
+              <span class="submeta">5파트 · 28챕터 · 총 4시간 42분</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="goto('player')">수강하기</button>
+            <button class="btn outline">후기 작성</button>
+          </div>
+        </div>
+
+        <!-- V03 VOD 수강완료 (sCd=200, studyRate=100). 다시보기 + 내 후기보기 + 수료증 -->
+        <div class="class-card">
+          <div class="thumb">🐍</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span><span class="tag mint sm">수강완료</span></div>
+            <h4>Python 프로그래밍 기초</h4>
+            <div class="meta">2025.11.30 ~ 2026.05.30 (무제한 시청) · 진도 100%</div>
+            <div class="progress-row">
+              <div class="progress"><div class="fill" style="width:100%"></div></div>
+              <span class="pct">100%</span>
+              <span class="submeta">6파트 · 36챕터 · 총 5시간 30분</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="goto('player')">다시보기</button>
+            <button class="btn outline">내 후기보기</button>
+            <button class="btn outline" onclick="alert('수료증 다운로드')">수료증 받기</button>
+          </div>
+        </div>
+
+        <!-- 온라인 클래스 = 줌·웨비나 수강중 -->
+        <div class="class-card">
+          <div class="thumb">💻</div>
+          <div class="body">
+            <div class="tags"><span class="tag blue">온라인 클래스</span><span class="tag mint sm">수강중</span></div>
+            <h4>UX 리서치 실전 워크숍 (Zoom)</h4>
+            <div class="meta">2026.06.01 ~ 2026.06.30 · 4/8회차 · 매주 토 14:00</div>
+            <a class="link-confirm" onclick="alert('Zoom 강의실 링크 열기')">온라인 강의실 링크 확인</a>
+          </div>
+        </div>
+
+        <!-- 오프라인 클래스 = 캠퍼스 정규 수강중 -->
+        <div class="class-card">
+          <div class="thumb">💼</div>
+          <div class="body">
+            <div class="tags"><span class="tag yellow">오프라인 클래스</span><span class="tag mint sm">수강중</span></div>
+            <h4>디자인 시스템 정규 과정</h4>
+            <div class="meta">2026.04.10 ~ 2026.08.10 · 3/8 회차 · 강남 캠퍼스 3층</div>
+          </div>
+        </div>
+
+        <!-- 세미나 = 단일 회차 수강예정 -->
+        <div class="class-card">
+          <div class="thumb" style="background: linear-gradient(135deg, var(--mint-01), var(--mint-03));">🎤</div>
+          <div class="body">
+            <div class="tags"><span class="tag purple">세미나</span><span class="tag gray">수강예정</span></div>
+            <h4>UX 리서치 실전 워크숍</h4>
+            <div class="meta">2026.06.28 (토) 14:00 · 단일 회차 · 강남 듀오톤 라운지 · 수강 시작 D-19</div>
+          </div>
+        </div>
+
+        <!-- 스터디 = 심사완료 (그룹 스터디 모집형) -->
+        <div class="class-card">
+          <div class="thumb" style="background: linear-gradient(135deg, var(--accent-yellow), #FCD34D);">📚</div>
+          <div class="body">
+            <div class="tags"><span class="tag green">스터디</span><span class="tag yellow sm">심사완료</span></div>
+            <h4>프로덕트 디자인 6주 그룹 스터디</h4>
+            <div class="meta">신청일 2026.05.20 · 심사 결과가 발표되었어요</div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="alert('합격 팝업: 결제하기')">결과 확인하기</button>
+          </div>
+        </div>
+
+        <!-- M01 멤버십으로 등록된 VOD + 멤버십 만료 = DIM 카드 + 멤버십 갱신 CTA -->
+        <div class="class-card" style="opacity: 0.6; background: var(--bg-soft);">
+          <div class="thumb" style="filter: grayscale(0.6);">🎨</div>
+          <div class="body">
+            <div class="tags"><span class="tag mint">VOD</span><span class="tag gray">수강종료 (멤버십 만료)</span></div>
+            <h4>Figma 마스터 클래스</h4>
+            <div class="meta" style="color: var(--danger);">멤버십 만료로 시청이 중단되었어요 · 마지막 시청: 10주차 56%</div>
+            <div class="progress-row">
+              <div class="progress"><div class="fill" style="width:56%; background: var(--dim);"></div></div>
+              <span class="pct" style="color: var(--muted);">56%</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn mint" onclick="alert('멤버십 갱신 페이지')">멤버십 갱신</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 출결 현황 ============ -->
+    <section class="page" data-page="attendance">
+      <div class="page-head">
+        <div><h1>출결 현황</h1><p>원격훈련 · 오프라인 출결 기록</p></div>
+      </div>
+
+      <div class="tabs">
+        <button class="active">AI 활용 기초 (원격훈련)</button>
+        <button>디자인 시스템 (오프라인)</button>
+      </div>
+
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; text-align: center;">
+          <div>
+            <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">총 출석</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--success);">11<span style="font-size: 13px; color: var(--muted);"> / 30 차시</span></div>
+          </div>
+          <div>
+            <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">결석</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--danger);">0</div>
+          </div>
+          <div>
+            <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">진도율</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--primary-dark);">37%</div>
+          </div>
+          <div>
+            <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">수료 기준</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--text-strong);">80%</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>주차</th><th>날짜</th><th>차시</th><th>학습 시간</th><th>상태</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>5주차</td><td>2026.06.09</td><td>2-2</td><td>00:48:12</td><td class="success">출석</td></tr>
+          <tr><td>5주차</td><td>2026.06.08</td><td>2-1</td><td>00:52:30</td><td class="success">출석</td></tr>
+          <tr><td>4주차</td><td>2026.06.05</td><td>1-3</td><td>00:45:18</td><td class="success">출석</td></tr>
+          <tr><td>4주차</td><td>2026.06.04</td><td>1-2</td><td>00:38:04</td><td class="success">출석</td></tr>
+          <tr><td>4주차</td><td>2026.06.03</td><td>1-1</td><td>—</td><td class="warn">미수강</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ Page: 성적·수료증 ============ -->
+    <section class="page" data-page="grades">
+      <div class="page-head">
+        <div><h1>성적·수료증</h1><p>수료 완료 강의 + 평가 결과</p></div>
+      </div>
+
+      <div class="tabs">
+        <button class="active">수료증 <span class="count">5</span></button>
+        <button>평가 성적 <span class="count">3</span></button>
+      </div>
+
+      <div class="cert-grid">
+        <div class="cert-card">
+          <div class="icon">🏅</div>
+          <h4>조직행동과 인사관리</h4>
+          <div class="meta">2026.05.30 수료 · 진도 100%</div>
+          <div class="grade">A+</div>
+          <button class="btn outline sm">수료증 다운로드</button>
+        </div>
+        <div class="cert-card">
+          <div class="icon">🏅</div>
+          <h4>Python 프로그래밍 기초</h4>
+          <div class="meta">2026.05.12 수료 · 진도 95%</div>
+          <div class="grade">A</div>
+          <button class="btn outline sm">수료증 다운로드</button>
+        </div>
+        <div class="cert-card">
+          <div class="icon">🏅</div>
+          <h4>조직 커뮤니케이션 실무</h4>
+          <div class="meta">2026.04.28 수료 · 진도 88%</div>
+          <div class="grade">B+</div>
+          <button class="btn outline sm">수료증 다운로드</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 질의응답 ============ -->
+    <section class="page" data-page="qna">
+      <div class="page-head">
+        <div><h1>질의응답</h1><p>내 질문 + 강사 답변</p></div>
+        <button class="btn primary">새 질문 작성</button>
+      </div>
+
+      <div class="tabs">
+        <button class="active">전체 <span class="count">8</span></button>
+        <button>답변 대기 <span class="count">2</span></button>
+        <button>답변 완료 <span class="count">6</span></button>
+      </div>
+
+      <div class="qna-list">
+        <div class="qna-item">
+          <div class="head">
+            <span class="tag purple">원격훈련</span>
+            <span class="tag green">답변 완료</span>
+          </div>
+          <h4>3주차 과제 데이터 셋 다운로드 안 됩니다</h4>
+          <p>강사님 안녕하세요. 3주차 과제 페이지에서 데이터 셋 링크가 만료되었다고 떠서요. 다시 받을 수 있을까요?</p>
+          <div class="meta">
+            <span>AI 활용 기초</span><span>·</span><span>2시간 전</span><span>·</span><span>답변 1</span>
+          </div>
+        </div>
+        <div class="qna-item">
+          <div class="head">
+            <span class="tag mint">VOD</span>
+            <span class="tag red">답변 대기</span>
+          </div>
+          <h4>5강 슬라이드 자료가 첨부되어 있지 않습니다</h4>
+          <p>5강 강의 자료 페이지에 슬라이드 PDF가 없습니다. 업로드 부탁드립니다.</p>
+          <div class="meta">
+            <span>리더십과 조직관리</span><span>·</span><span>어제</span><span>·</span><span>답변 0</span>
+          </div>
+        </div>
+        <div class="qna-item">
+          <div class="head">
+            <span class="tag purple">원격훈련</span>
+            <span class="tag green">답변 완료</span>
+          </div>
+          <h4>출석 인증 시간 기준이 어떻게 되나요?</h4>
+          <p>1일 8차시 cap이 있다고 하셨는데 정확히 어떻게 카운트되는지 궁금합니다.</p>
+          <div class="meta">
+            <span>AI 활용 기초</span><span>·</span><span>2일 전</span><span>·</span><span>답변 2</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: VOD 플레이어 (openpath.kr 정합 = 풀스크린 몰입 / LNB 제거) ============ -->
+    <section class="page" data-page="player">
+      <!-- 상단 minimal bar = 강의명 + 나가기 (openpath.kr AuthLayout hideFooter 정합) -->
+      <div class="vod-topbar">
+        <div class="vod-topbar-info">
+          <span class="vod-topbar-back" onclick="goto('courses')">‹</span>
+          <div class="vod-topbar-title">
+            <h2>리더십과 조직관리</h2>
+            <span class="vod-topbar-pct">진도 42% · 5파트 · 28챕터</span>
+          </div>
+        </div>
+        <button class="vod-topbar-exit" onclick="goto('courses')">강의장 나가기</button>
+      </div>
+
+      <!-- 2단 layout: 좌 영상 + 강의명·이전/다음 / 우 Class·QnA -->
+      <div class="vod-player-sec">
+        <!-- ① 좌측 vodMediaBox = 강의명 + 이전/다음 + video -->
+        <div class="vod-media-box">
+          <div class="vod-chapter-head">
+            <h3 class="vod-current-title">2-2 비지도학습 K-means 클러스터링</h3>
+            <div class="vod-btn-prevnext">
+              <button class="vod-prev" onclick="alert('이전 차시')">‹ 이전</button>
+              <button class="vod-next" onclick="alert('다음 차시')">다음 ›</button>
+            </div>
+          </div>
+          <div class="vod-video">
+            <div class="vod-play-icon">▶</div>
+            <div class="vod-controls">
+              <span>▶</span>
+              <div class="vod-bar"><div class="fill"></div></div>
+              <span class="vod-time">08:42 / 22:18</span>
+              <span title="배속">1.0×</span>
+              <span title="자막">🔡</span>
+              <span title="전체화면">⛶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② 우측 vodCnts = Class / QnA 2탭 -->
+        <div class="vod-cnts">
+          <div class="vod-tab">
+            <a class="vod-tab-link on" onclick="switchVodTab('class')" data-vodtab="class">Class</a>
+            <a class="vod-tab-link" onclick="switchVodTab('qna')" data-vodtab="qna">QnA</a>
+          </div>
+
+          <!-- Class 탭 = 챕터/차시 list (openpath.kr .vodStudyBox 정합) -->
+          <div class="vod-panel active" data-vodpanel="class">
+            <div class="vod-study-box">
+              <div class="vod-all-study">
+                <dl>
+                  <dt>리더십과 조직관리</dt>
+                  <dd>2026.03.21 ~ 2026.09.21</dd>
+                </dl>
+                <button class="vod-btn-annou" title="강의 공지" onclick="alert('강의 공지사항 layer')">공지</button>
+                <div class="vod-percent-box">
+                  <div class="vod-percent-tit">
+                    <p>전체 수강률 <em>42%</em></p>
+                    <span>총 28강 · 4시간 42분</span>
+                  </div>
+                  <div class="vod-bar-bg"><div class="vod-bar-fill" style="width: 42%;"></div></div>
+                </div>
+              </div>
+
+              <!-- Part 1 -->
+              <div class="vod-part on" id="part_1">
+                <div class="vod-part-head" onclick="this.parentElement.classList.toggle('on');">
+                  <span class="ix">1.</span>
+                  <span class="title">리더십 기초</span>
+                  <span class="pct">5/5</span>
+                  <span class="fold">−</span>
+                </div>
+                <div class="vod-part-list">
+                  <div class="vod-chapter done"><span class="ix">✓</span><span class="title">1-1 리더란 무엇인가</span><span class="dur">18:42</span></div>
+                  <div class="vod-chapter done"><span class="ix">✓</span><span class="title">1-2 리더십 스타일</span><span class="dur">22:14</span></div>
+                  <div class="vod-chapter done"><span class="ix">✓</span><span class="title">1-3 변혁적 리더십</span><span class="dur">19:30</span></div>
+                  <div class="vod-chapter done"><span class="ix">✓</span><span class="title">1-4 서번트 리더십</span><span class="dur">17:22</span></div>
+                  <div class="vod-chapter done"><span class="ix">✓</span><span class="title">1-5 상황 리더십</span><span class="dur">21:08</span></div>
+                </div>
+              </div>
+
+              <!-- Part 2 -->
+              <div class="vod-part on" id="part_2">
+                <div class="vod-part-head" onclick="this.parentElement.classList.toggle('on');">
+                  <span class="ix">2.</span>
+                  <span class="title">팀 빌딩과 동기 부여</span>
+                  <span class="pct">2/6</span>
+                  <span class="fold">−</span>
+                </div>
+                <div class="vod-part-list">
+                  <div class="vod-chapter done"><span class="ix">✓</span><span class="title">2-1 팀 구성 원칙</span><span class="dur">24:08</span></div>
+                  <div class="vod-chapter active"><span class="ix">▶</span><span class="title">2-2 비지도학습 K-means</span><span class="dur">22:18</span></div>
+                  <div class="vod-chapter"><span class="ix">3</span><span class="title">2-3 동기 부여 이론</span><span class="dur">26:42</span></div>
+                  <div class="vod-chapter"><span class="ix">4</span><span class="title">2-4 갈등 관리</span><span class="dur">28:12</span></div>
+                  <div class="vod-chapter"><span class="ix">5</span><span class="title">2-5 피드백 기술</span><span class="dur">23:14</span></div>
+                  <div class="vod-chapter"><span class="ix">6</span><span class="title">2-6 코칭 스킬</span><span class="dur">25:32</span></div>
+                </div>
+              </div>
+
+              <!-- Part 3 fold -->
+              <div class="vod-part fold" id="part_3">
+                <div class="vod-part-head" onclick="this.parentElement.classList.toggle('on'); this.parentElement.classList.toggle('fold');">
+                  <span class="ix">3.</span>
+                  <span class="title">조직 행동과 변화 관리</span>
+                  <span class="pct">0/8</span>
+                  <span class="fold">+</span>
+                </div>
+                <div class="vod-part-list">
+                  <div class="vod-chapter"><span class="ix">1</span><span class="title">3-1 조직 문화 진단</span><span class="dur">30:14</span></div>
+                  <div class="vod-chapter"><span class="ix">2</span><span class="title">3-2 변화 곡선</span><span class="dur">28:42</span></div>
+                </div>
+              </div>
+
+              <!-- Part 4 fold -->
+              <div class="vod-part fold" id="part_4">
+                <div class="vod-part-head" onclick="this.parentElement.classList.toggle('on'); this.parentElement.classList.toggle('fold');">
+                  <span class="ix">4.</span>
+                  <span class="title">실전 사례 워크숍</span>
+                  <span class="pct">0/9</span>
+                  <span class="fold">+</span>
+                </div>
+                <div class="vod-part-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QnA 탭 = 질문 list -->
+          <div class="vod-panel" data-vodpanel="qna" style="display: none;">
+            <div class="vod-qna-box">
+              <div class="vod-qna-head">
+                <div class="vod-qna-filter">
+                  <button class="active">전체 <span class="cnt">8</span></button>
+                  <button>이 차시 <span class="cnt">3</span></button>
+                </div>
+                <button class="btn primary sm" onclick="alert('QnA 작성')">질문하기</button>
+              </div>
+
+              <div class="vod-qna-list">
+                <div class="vod-qna-item">
+                  <div class="vod-qna-meta">
+                    <span class="vod-qna-tag">2-2</span>
+                    <span class="vod-qna-state confirm">답변완료</span>
+                  </div>
+                  <h5>K-means에서 클러스터 수 K는 어떻게 정하나요?</h5>
+                  <p>강의에서 K=3으로 설정하셨는데, 데이터에 따라 K를 정하는 기준이 궁금합니다.</p>
+                  <div class="vod-qna-foot">관자 · 2시간 전 · 답변 1</div>
+                </div>
+                <div class="vod-qna-item">
+                  <div class="vod-qna-meta">
+                    <span class="vod-qna-tag">2-1</span>
+                    <span class="vod-qna-state ing">답변대기</span>
+                  </div>
+                  <h5>팀 구성 원칙에서 다양성과 유사성의 균형</h5>
+                  <p>강사님이 다양성을 강조하셨는데 실제 현장에서는 유사한 사람들이 더 좋은 성과를 내는 것 같습니다.</p>
+                  <div class="vod-qna-foot">학습자A · 어제 · 답변 0</div>
+                </div>
+                <div class="vod-qna-item">
+                  <div class="vod-qna-meta">
+                    <span class="vod-qna-tag">1-3</span>
+                    <span class="vod-qna-state confirm">답변완료</span>
+                  </div>
+                  <h5>변혁적 리더십과 서번트 리더십의 실무 적용</h5>
+                  <p>두 리더십 스타일을 동시에 활용할 수 있나요?</p>
+                  <div class="vod-qna-foot">학습자B · 3일 전 · 답변 2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 개인 정보 관리 (Figma Mypage 7390:12924 정합) ============ -->
+    <section class="page" data-page="account">
+      <div class="page-head"><div><h1>개인 정보 관리</h1></div></div>
+
+      <!-- ① 기본 회원 정보 = 이름/이메일/휴대폰/닉네임/생년월일/성별/연동 계정 -->
+      <div class="my-info-manage">
+        <h4 class="titF20">기본 회원 정보</h4>
+        <button class="btn-manage">변경하기</button>
+        <div class="form">
+          <div class="gp"><h5>이름</h5><div class="input">관자</div></div>
+          <div class="gp"><h5>이메일</h5><div class="input">openpath@duotone.io</div></div>
+          <div class="gp"><h5>휴대폰</h5><div class="input">010.1234.5678</div></div>
+          <div class="gp"><h5>닉네임</h5><div class="input">디자이너관자</div></div>
+          <div class="gp"><h5>생년월일</h5><div class="input">1991.08.15</div></div>
+          <div class="gp"><h5>성별</h5><div class="input">여성</div></div>
+          <div class="gp"><h5>연동 계정</h5><div class="input" style="color: var(--primary); font-weight: 700; cursor: pointer;">카카오 연동하기 ›</div></div>
+        </div>
+      </div>
+
+      <!-- ② 직무 및 연차 -->
+      <div class="my-info-manage">
+        <h4 class="titF20">직무 및 연차</h4>
+        <button class="btn-manage">변경하기</button>
+        <div class="form">
+          <div class="gp"><h5>직무</h5><div class="input">UX/UI 디자인</div></div>
+          <div class="gp"><h5>연차</h5><div class="input">5년차</div></div>
+        </div>
+      </div>
+
+      <!-- ③ 비밀번호 관리 -->
+      <div class="my-info-manage">
+        <h4 class="titF20 none">비밀번호 관리</h4>
+        <button class="btn-manage">변경하기</button>
+      </div>
+
+      <!-- 회원 탈퇴 = .btnMemOut (별도 텍스트 = 카드 X) -->
+      <a class="btn-mem-out" onclick="alert('회원 탈퇴하기')">회원 탈퇴하기 ›</a>
+    </section>
+
+    <!-- ============ Page: 강의장 (원격훈련 = VOD 분리) ============ -->
+    <section class="page" data-page="classroom">
+      <div class="breadcrumb">
+        <a onclick="goto('dashboard')">대시보드</a>
+        <span class="sep">›</span>
+        <a onclick="goto('courses')">수강 과목</a>
+        <span class="sep">›</span>
+        <span class="current">강의장 · AI 활용 기초</span>
+      </div>
+
+      <div class="classroom-banner">
+        <div class="text">
+          <div class="tags">
+            <span class="tag">원격훈련</span>
+            <span class="tag">노동부 환급</span>
+          </div>
+          <h2>AI 활용 기초 - 머신러닝 입문</h2>
+          <p>김지연 강사 · 5주차 · D-12 · 진도 80% + 평가 60점 이상 수료</p>
+        </div>
+        <div class="meta-grid">
+          <div class="item"><div class="label">진도</div><div class="val">37% (11/30)</div></div>
+          <div class="item"><div class="label">평가</div><div class="val">미응시</div></div>
+          <div class="item"><div class="label">출석</div><div class="val">11/11일</div></div>
+        </div>
+      </div>
+
+      <!-- 5 탭 (메디 default) -->
+      <div class="classroom-tabs">
+        <button class="active" onclick="roomTab('status')">📊 학습 현황</button>
+        <button onclick="roomTab('lectures')">🎬 주차별 강의</button>
+        <button onclick="roomTab('assignment')">📝 과제 <span class="badge">1</span></button>
+        <button onclick="roomTab('exam')">📋 시험</button>
+        <button onclick="roomTab('notice')">📢 공지사항 <span class="badge">2</span></button>
+      </div>
+
+      <!-- Panel 1: 학습 현황 -->
+      <div class="room-panel active" data-room="status">
+        <div class="kpi-row-4">
+          <div class="kpi">
+            <div class="icon-box">📘</div>
+            <div class="text"><span class="label">진도율</span><span class="val">37<span class="unit">%</span></span></div>
+          </div>
+          <div class="kpi success">
+            <div class="icon-box">✓</div>
+            <div class="text"><span class="label">완료 차시</span><span class="val">11<span class="unit">/ 30</span></span></div>
+          </div>
+          <div class="kpi warn">
+            <div class="icon-box">⏱</div>
+            <div class="text"><span class="label">남은 시간</span><span class="val">D-12</span></div>
+          </div>
+          <div class="kpi">
+            <div class="icon-box">🎯</div>
+            <div class="text"><span class="label">수료 기준</span><span class="val">80<span class="unit">%</span></span></div>
+          </div>
+        </div>
+
+        <!-- 노동부 1일 8차시 cap -->
+        <div class="cap-card">
+          <div class="head">
+            <h3>📌 오늘 학습 가능 차시</h3>
+            <div class="count">5<span class="max"> / 8 차시</span></div>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill" style="width: 62.5%;"></div>
+          </div>
+          <div class="bar-marks">
+            <span>0</span><span>2</span><span>4</span><span>6</span><span>8 차시 (cap)</span>
+          </div>
+          <div class="desc">
+            <strong>노동부 룰</strong> · 1일 최대 8차시까지 학습 인정. 초과 시 다음날 재개. 차시 50% 미달 시 "미인정" 처리
+          </div>
+        </div>
+
+        <!-- 성적·수료증 미니 박스 (사용자 안 = 강의장 내부에서 성적 확인 가능) -->
+        <div class="card" style="margin-bottom: 16px; background: linear-gradient(120deg, var(--primary-tint), #ECFDF5); border-color: var(--accent-mint);">
+          <div class="card-head">
+            <h3>🏆 성적·수료증</h3>
+            <a class="view-all" onclick="goto('grades')">전체 보기 ›</a>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 8px 4px;">
+            <div style="text-align: center; padding: 12px 8px; background: rgba(255,255,255,0.7); border-radius: 8px;">
+              <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">진도 점수</div>
+              <div style="font-size: 22px; font-weight: 900; color: var(--primary-dark);">37<span style="font-size: 12px; color: var(--muted); font-weight: 600;">/ 80 기준</span></div>
+            </div>
+            <div style="text-align: center; padding: 12px 8px; background: rgba(255,255,255,0.7); border-radius: 8px;">
+              <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">평가 점수</div>
+              <div style="font-size: 22px; font-weight: 900; color: var(--muted);">—<span style="font-size: 12px; color: var(--muted); font-weight: 600;"> / 60 기준</span></div>
+            </div>
+            <div style="text-align: center; padding: 12px 8px; background: rgba(255,255,255,0.7); border-radius: 8px;">
+              <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">예상 등급</div>
+              <div style="font-size: 22px; font-weight: 900; color: var(--muted);">진행중</div>
+            </div>
+            <div style="text-align: center; padding: 12px 8px; background: rgba(255,255,255,0.7); border-radius: 8px;">
+              <div style="font-size: 11.5px; color: var(--muted); margin-bottom: 4px;">수료증</div>
+              <button class="btn outline sm" disabled style="margin-top: 2px; opacity: 0.55;">수료 대기</button>
+            </div>
+          </div>
+          <div style="background: rgba(255,255,255,0.55); border-left: 3px solid var(--warn-cta); border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: 12px; color: var(--text);">
+            <strong style="color: var(--warn-cta);">수료까지 진도 43% + 평가 응시 필요</strong> · 5주차 종료 시점 진도 도달 권장
+          </div>
+        </div>
+
+        <!-- 차시별 출결 -->
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="card-head">
+            <h3>📅 차시별 출결</h3>
+            <span class="tag mint">현재 5주차</span>
+          </div>
+          <div class="session-grid">
+            <div class="session done"><div class="ix">1-1</div><div class="label">완료</div></div>
+            <div class="session done"><div class="ix">1-2</div><div class="label">완료</div></div>
+            <div class="session done"><div class="ix">1-3</div><div class="label">완료</div></div>
+            <div class="session done"><div class="ix">2-1</div><div class="label">완료</div></div>
+            <div class="session current"><div class="ix">2-2</div><div class="label">학습 중</div></div>
+            <div class="session"><div class="ix">3-1</div><div class="label">미수강</div></div>
+            <div class="session"><div class="ix">3-2</div><div class="label">미수강</div></div>
+            <div class="session unmet"><div class="ix">4-1</div><div class="label">미인정</div></div>
+            <div class="session locked"><div class="ix">4-2</div><div class="label">잠김</div></div>
+            <div class="session locked"><div class="ix">5-1</div><div class="label">잠김</div></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn primary lg" onclick="goto('classroom-player')">▶ 학습 이어하기 (2-2 비지도학습)</button>
+          <button class="btn outline lg" onclick="openCapcha()">🔐 본인 인증 테스트</button>
+        </div>
+      </div>
+
+      <!-- Panel 2: 주차별 강의 -->
+      <div class="room-panel" data-room="lectures">
+        <div class="card">
+          <h3 style="margin-bottom: 14px;">5주차 — 비지도 학습 (현재)</h3>
+          <div class="chapter-list">
+            <div class="chapter-item done"><span class="ix">✓</span><span class="title">5-1 클러스터링 개요</span><span class="dur">18:42</span></div>
+            <div class="chapter-item current" onclick="goto('classroom-player')"><span class="ix">▶</span><span class="title">5-2 K-means 알고리즘</span><span class="dur">22:18</span></div>
+            <div class="chapter-item"><span class="ix">3</span><span class="title">5-3 계층 클러스터링</span><span class="dur">26:14</span></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 12px;">
+          <h3 style="margin-bottom: 14px;">4주차 — 지도학습 회귀 (완료)</h3>
+          <div class="chapter-list">
+            <div class="chapter-item done"><span class="ix">✓</span><span class="title">4-1 선형 회귀</span><span class="dur">24:08</span></div>
+            <div class="chapter-item done"><span class="ix">✓</span><span class="title">4-2 다항 회귀</span><span class="dur">22:32</span></div>
+            <div class="chapter-item done"><span class="ix">✓</span><span class="title">4-3 정규화</span><span class="dur">28:42</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3: 과제 -->
+      <div class="room-panel" data-room="assignment">
+        <div class="room-list">
+          <div class="room-item">
+            <div class="icon-box">📝</div>
+            <div class="body">
+              <div class="top">
+                <span class="tag yellow">5주차</span>
+                <span class="tag red">D-3</span>
+              </div>
+              <h4>K-means 클러스터링 실습 과제</h4>
+              <div class="meta">제출 형식: 파일 + 텍스트 · 마감: 2026.06.12 23:59</div>
+            </div>
+            <div class="status warn">제출 대기</div>
+            <button class="btn primary">제출하기</button>
+          </div>
+          <div class="room-item">
+            <div class="icon-box">📝</div>
+            <div class="body">
+              <div class="top">
+                <span class="tag yellow">4주차</span>
+              </div>
+              <h4>회귀 분석 실습 과제</h4>
+              <div class="meta">제출일 2026.06.04 · 평가 88점</div>
+            </div>
+            <div class="status done">완료 · 88점</div>
+            <button class="btn outline">결과 보기</button>
+          </div>
+          <div class="room-item">
+            <div class="icon-box">📝</div>
+            <div class="body">
+              <div class="top">
+                <span class="tag yellow">3주차</span>
+              </div>
+              <h4>데이터 전처리 실습 과제</h4>
+              <div class="meta">제출일 2026.05.28 · 평가 92점</div>
+            </div>
+            <div class="status done">완료 · 92점</div>
+            <button class="btn outline">결과 보기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 4: 시험 -->
+      <div class="room-panel" data-room="exam">
+        <div class="card" style="background: var(--warn-bg); border-color: #FCD34D; margin-bottom: 12px;">
+          <h4 style="color: #78350F; margin-bottom: 4px;">⚠️ 노동부 평가 룰</h4>
+          <p style="font-size: 12px; color: var(--muted);">
+            진도 50% 이상 진행 후 응시 가능 · 60점 이상 수료 · 부정 응시 차단 (탭 전환 불가, 1회 응시)
+          </p>
+        </div>
+
+        <div class="room-list">
+          <div class="room-item exam">
+            <div class="icon-box">📋</div>
+            <div class="body">
+              <div class="top">
+                <span class="tag red">중간 평가</span>
+                <span class="tag mint">응시 가능</span>
+              </div>
+              <h4>1차 평가 — 1~3주차 범위</h4>
+              <div class="meta">25문항 · 50분 · 1회 응시 · 60점 수료</div>
+            </div>
+            <div class="status warn">응시 대기</div>
+            <button class="btn primary">응시하기</button>
+          </div>
+          <div class="room-item exam">
+            <div class="icon-box">📋</div>
+            <div class="body">
+              <div class="top">
+                <span class="tag red">최종 평가</span>
+                <span class="tag gray">잠김</span>
+              </div>
+              <h4>최종 평가 — 전 범위</h4>
+              <div class="meta">진도 80% 도달 시 응시 가능 · 50문항 · 90분</div>
+            </div>
+            <div class="status danger">진도 부족 (37%)</div>
+            <button class="btn outline" disabled style="opacity: 0.5; cursor: not-allowed;">응시 불가</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 5: 공지사항 -->
+      <div class="room-panel" data-room="notice">
+        <div class="room-list">
+          <div class="room-item notice">
+            <div class="icon-box">📢</div>
+            <div class="body">
+              <div class="top">
+                <span class="tag red">중요</span>
+              </div>
+              <h4>5주차 수업 일정 변경 안내 (06.10)</h4>
+              <div class="meta">김지연 강사 · 2시간 전</div>
+            </div>
+            <div class="status">신규</div>
+          </div>
+          <div class="room-item notice">
+            <div class="icon-box">📢</div>
+            <div class="body">
+              <h4>중간 평가 응시 안내 (~06.20)</h4>
+              <div class="meta">운영팀 · 어제</div>
+            </div>
+            <div class="status">신규</div>
+          </div>
+          <div class="room-item notice">
+            <div class="icon-box">📢</div>
+            <div class="body">
+              <h4>학습 자료실 PDF 추가 (5주차)</h4>
+              <div class="meta">김지연 강사 · 3일 전</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 강의장 v2 (메디 default = 별도 강의장 풀폭 페이지) ============ -->
+    <section class="page" data-page="classroom-v2">
+      <div class="classroom-page">
+
+        <!-- 좌측 = 강의장 자체 sidebar -->
+        <aside class="classroom-side">
+          <a class="exit-link" onclick="goto('courses')">← 강의장 나가기</a>
+
+          <div class="course-info">
+            <span class="ico-sym">원격훈련</span>
+            <h2>AI 활용 기초 - 머신러닝 입문</h2>
+            <div class="meta">
+              <strong>김지연 강사</strong><br>
+              2026.05.06 — 2026.07.20<br>
+              5주차 · D-12
+            </div>
+          </div>
+
+          <div class="progress-mini">
+            <div class="row"><span>전체 진도</span><strong>37%</strong></div>
+            <div class="bar"><div class="fill" style="width: 37%;"></div></div>
+            <div class="row" style="margin-top: 6px; font-size: 11px;">
+              <span>11/30 차시</span><span>수료 80%</span>
+            </div>
+          </div>
+
+          <div class="room-side-tabs">
+            <button class="active" onclick="sideTab('chapters')">강의</button>
+            <button onclick="sideTab('assignment')">과제</button>
+            <button onclick="sideTab('exam')">시험</button>
+            <button onclick="sideTab('notice')">공지</button>
+          </div>
+
+          <!-- 탭 내용: 강의 (차시 list) -->
+          <div class="room-side-panel active" data-side="chapters">
+            <div class="week-group">
+              <div class="week-title">
+                <span>5주차 · 비지도 학습</span>
+                <span class="week-pct">1/3</span>
+              </div>
+              <div class="chapter-item-sm done"><span class="check">✓</span><span class="title-sm">5-1 클러스터링 개요</span><span class="dur-sm">18:42</span></div>
+              <div class="chapter-item-sm current"><span class="check">▶</span><span class="title-sm">5-2 K-means</span><span class="dur-sm">22:18</span></div>
+              <div class="chapter-item-sm"><span class="check">○</span><span class="title-sm">5-3 계층 클러스터링</span><span class="dur-sm">26:14</span></div>
+            </div>
+            <div class="week-group">
+              <div class="week-title">
+                <span>4주차 · 지도학습 회귀</span>
+                <span class="week-pct">3/3</span>
+              </div>
+              <div class="chapter-item-sm done"><span class="check">✓</span><span class="title-sm">4-1 선형 회귀</span><span class="dur-sm">24:08</span></div>
+              <div class="chapter-item-sm done"><span class="check">✓</span><span class="title-sm">4-2 다항 회귀</span><span class="dur-sm">22:32</span></div>
+              <div class="chapter-item-sm done"><span class="check">✓</span><span class="title-sm">4-3 정규화</span><span class="dur-sm">28:42</span></div>
+            </div>
+          </div>
+          <!-- 탭 내용: 과제 -->
+          <div class="room-side-panel" data-side="assignment" style="display:none;">
+            <div class="chapter-item-sm current"><span class="check">📝</span><span class="title-sm">5주차 K-means 실습</span><span class="dur-sm">D-3</span></div>
+            <div class="chapter-item-sm done"><span class="check">✓</span><span class="title-sm">4주차 회귀 실습</span><span class="dur-sm">88점</span></div>
+            <div class="chapter-item-sm done"><span class="check">✓</span><span class="title-sm">3주차 전처리</span><span class="dur-sm">92점</span></div>
+          </div>
+          <!-- 탭 내용: 시험 -->
+          <div class="room-side-panel" data-side="exam" style="display:none;">
+            <div class="chapter-item-sm current"><span class="check">📋</span><span class="title-sm">1차 평가 (1-3주차)</span><span class="dur-sm">25문항</span></div>
+            <div class="chapter-item-sm"><span class="check">🔒</span><span class="title-sm">최종 평가</span><span class="dur-sm">진도 80%↑</span></div>
+          </div>
+          <!-- 탭 내용: 공지 -->
+          <div class="room-side-panel" data-side="notice" style="display:none;">
+            <div class="chapter-item-sm current"><span class="check">📢</span><span class="title-sm">5주차 일정 변경</span><span class="dur-sm">2h</span></div>
+            <div class="chapter-item-sm"><span class="check">📢</span><span class="title-sm">중간 평가 응시 안내</span><span class="dur-sm">어제</span></div>
+          </div>
+        </aside>
+
+        <!-- 우측 메인 -->
+        <main class="classroom-main">
+          <div class="top-bar">
+            <div>
+              <div class="lesson-title">5-2 K-means 알고리즘</div>
+              <div class="lesson-meta">5주차 · 22분 18초 · 차시 50% 진행 = 인정</div>
+            </div>
+            <div class="actions">
+              <button class="btn outline sm" onclick="openCapcha()">🔐 본인 인증</button>
+              <button class="btn outline sm" onclick="goto('qna')">💬 질문하기</button>
+            </div>
+          </div>
+
+          <div class="player-wrap">
+            <div class="play-icon">▶</div>
+            <div class="controls">
+              <span>▶</span>
+              <div class="bar"><div class="fill"></div></div>
+              <span class="time">08:42 / 22:18</span>
+              <span>⚙</span>
+              <span>⛶</span>
+            </div>
+          </div>
+
+          <!-- 노동부 cap card (영상 아래) -->
+          <div class="cap-card" style="margin-top: 18px;">
+            <div class="head">
+              <h3>📌 오늘 학습 가능 차시</h3>
+              <div class="count">5<span class="max"> / 8 차시</span></div>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 62.5%;"></div></div>
+            <div class="bar-marks"><span>0</span><span>2</span><span>4</span><span>6</span><span>8 cap</span></div>
+            <div class="desc"><strong>노동부 룰</strong> · 1일 최대 8차시. 차시 50% 미달 시 미인정</div>
+          </div>
+
+          <!-- 학습 자료 -->
+          <div class="card" style="margin-top: 16px;">
+            <h3 style="margin-bottom: 12px;">📎 학습 자료</h3>
+            <div class="panel-list">
+              <div class="item"><div class="icon">📄</div><div class="body"><h5>5-2 강의 슬라이드</h5><p>PDF · 4.2 MB</p></div><span class="time">다운로드</span></div>
+              <div class="item"><div class="icon">📂</div><div class="body"><h5>5-2 실습 코드</h5><p>ZIP · 1.8 MB</p></div><span class="time">다운로드</span></div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- ============ Page: 강의장 학습 플레이어 (원격훈련 전용 = VOD 분리) ============ -->
+    <section class="page" data-page="classroom-player">
+      <div class="breadcrumb">
+        <a onclick="goto('dashboard')">대시보드</a>
+        <span class="sep">›</span>
+        <a onclick="goto('classroom')">강의장 · AI 활용 기초</a>
+        <span class="sep">›</span>
+        <span class="current">학습 플레이어</span>
+      </div>
+
+      <div class="room-player-layout">
+        <div>
+          <div class="player-wrap">
+            <div class="play-icon">▶</div>
+            <div class="controls">
+              <span>▶</span>
+              <div class="bar"><div class="fill"></div></div>
+              <span class="time">08:42 / 22:18</span>
+              <span>⚙</span>
+              <span>⛶</span>
+            </div>
+          </div>
+
+          <div class="lesson-info">
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <span class="tag purple">원격훈련</span>
+              <span class="tag mint">5주차 2차시</span>
+              <span class="tag yellow">차시 50% 진행 = 인정</span>
+            </div>
+            <h2>K-means 알고리즘</h2>
+            <div class="lesson-meta">AI 활용 기초 · 김지연 강사 · 22분 18초</div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn primary">▶ 이어 학습</button>
+              <button class="btn outline">📎 자료 다운로드</button>
+              <button class="btn outline" onclick="goto('qna')">💬 질문하기</button>
+              <button class="btn outline" onclick="goto('classroom')">← 강의장</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-stack">
+          <!-- ★ 1일 8차시 cap (원격훈련만) -->
+          <div class="cap-card" style="margin-bottom: 0;">
+            <div class="head">
+              <h3>📌 오늘 학습</h3>
+              <div class="count">5<span class="max"> / 8</span></div>
+            </div>
+            <div class="bar-bg"><div class="bar-fill" style="width: 62.5%;"></div></div>
+            <div class="bar-marks"><span>0</span><span>4</span><span>8 cap</span></div>
+            <div class="desc" style="font-size: 11px;">
+              <strong>3차시 남음</strong> · cap 도달 시 다음날 재개
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom: 12px; font-size: 13.5px;">차시 50% 진행 시 인정</h3>
+            <div class="progress" style="max-width: 100%; height: 10px; margin-bottom: 6px;">
+              <div class="fill" style="width: 38%;"></div>
+            </div>
+            <div style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">38% · <strong style="color: var(--warn-cta);">12% 더 보면 인정</strong></div>
+            <div style="background: var(--warn-bg); padding: 8px 10px; border-radius: 6px; font-size: 10.5px; color: var(--muted); border-left: 3px solid var(--warn-cta);">
+              차시 50% 미달 시 출석 미인정
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom: 12px; font-size: 13.5px;">차시 목록 (5주차)</h3>
+            <div class="chapter-list">
+              <div class="chapter-item done" style="padding: 8px 10px;"><span class="ix">✓</span><span class="title" style="font-size: 11.5px;">5-1 클러스터링 개요</span></div>
+              <div class="chapter-item current" style="padding: 8px 10px;"><span class="ix">▶</span><span class="title" style="font-size: 11.5px;">5-2 K-means</span></div>
+              <div class="chapter-item" style="padding: 8px 10px;"><span class="ix">3</span><span class="title" style="font-size: 11.5px;">5-3 계층 클러스터링</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Page: 결제/환불 내역 (openpath.kr 라이브 정합) ============ -->
+    <section class="page" data-page="order">
+      <div class="page-head"><div><h1>결제/환불 내역</h1><p>결제 완료·환불 완료·영수증·기간 연장</p></div></div>
+
+      <div class="tabs">
+        <button class="active">전체 <span class="count">4</span></button>
+        <button>결제 완료 <span class="count">3</span></button>
+        <button>환불 완료 <span class="count">1</span></button>
+      </div>
+
+      <ul class="order-list">
+        <li class="order-item">
+          <h4>AI 활용 기초 - 머신러닝 입문</h4>
+          <p class="order-meta">결제일: 2026.05.06 <span class="sep">|</span> <span class="state success">결제 완료</span></p>
+          <div class="order-actions">
+            <button class="btn-receipt">영수증 받기</button>
+          </div>
+          <button class="btn-refund">환불 신청</button>
+        </li>
+
+        <li class="order-item">
+          <h4>리더십과 조직관리 (VOD)</h4>
+          <p class="order-meta">결제일: 2026.03.21 <span class="sep">|</span> <span class="state success">결제 완료</span></p>
+          <div class="order-actions">
+            <button class="btn-receipt">영수증 받기</button>
+            <button class="btn-day">기간 연장하기</button>
+          </div>
+        </li>
+
+        <li class="order-item">
+          <h4>OPENPATH 멤버십 (3개월)</h4>
+          <p class="order-meta">결제일: 2026.03.15 <span class="sep">|</span> <span class="state warn">자동 갱신 D-7</span></p>
+          <div class="order-actions">
+            <button class="btn-receipt">영수증 받기</button>
+            <button class="btn-day">정기결제 해지</button>
+          </div>
+        </li>
+
+        <li class="order-item">
+          <h4>UXUI 포트폴리오 마스터 클래스 (VOD)</h4>
+          <p class="order-meta">결제일: 2026.02.10 <span class="sep">|</span> <span class="state danger">환불 완료</span></p>
+          <div class="order-actions">
+            <button class="btn-receipt">영수증 받기</button>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ Page: 내 쿠폰 (openpath.kr .entryCoupon + .myCouponList 정확 복제) ============ -->
+    <section class="page" data-page="coupon">
+      <div class="page-head"><div><h1>내 쿠폰</h1></div></div>
+
+      <!-- ① .entryCoupon = 검정 top border + 가로 form -->
+      <div class="entry-coupon">
+        <dl>
+          <dt>쿠폰 등록하기</dt>
+          <dd>
+            <div class="input-wrap">
+              <input type="text" placeholder="등록하실 쿠폰 코드를 입력해 주세요.">
+              <button class="btn-overlap">등록하기</button>
+            </div>
+          </dd>
+        </dl>
+      </div>
+
+      <!-- ② .myCouponList = 가로형 카드 420×240 + dashed D-day -->
+      <div class="my-coupon-list">
+        <h4>보유 쿠폰 현황</h4>
+        <ul>
+          <li>
+            <div class="cnt">
+              <span class="ico-sym">VOD 전용</span>
+              <p>VOD 클래스 30% 할인 쿠폰<sup></sup></p>
+            </div>
+            <span class="reg-date">등록일 2026.06.05</span>
+            <div class="date">D - 25</div>
+          </li>
+          <li>
+            <div class="cnt">
+              <span class="ico-sym">원격훈련</span>
+              <p>원격훈련 50,000원 할인 쿠폰</p>
+            </div>
+            <span class="reg-date">등록일 2026.05.20</span>
+            <div class="date danger">D - 3</div>
+          </li>
+          <li>
+            <div class="cnt">
+              <span class="ico-sym">전체</span>
+              <p>웰컴 5,000원 할인 쿠폰</p>
+            </div>
+            <span class="reg-date">등록일 2026.03.15</span>
+            <div class="date">기간<br>무제한</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ Page: 1:1 문의 (openpath.kr .qnaTop + .qnaList 정확 복제) ============ -->
+    <section class="page" data-page="qna-help">
+      <div class="page-head"><div><h1>1:1 문의</h1></div></div>
+
+      <!-- .qnaTop = 흰 banner 107h / radius 16 + Mint 텍스트 link -->
+      <div class="qna-top">
+        <p>무엇을 도와드릴까요?</p>
+        <a onclick="alert('문의하기 폼')">문의하기 ›</a>
+      </div>
+
+      <!-- .qnaListSec -->
+      <div class="qna-list-sec">
+        <h4 class="subH4">내 문의 내역</h4>
+
+        <div class="qna-tab">
+          <a class="on">전체</a>
+          <a>대기중</a>
+          <a>답변완료</a>
+        </div>
+
+        <div class="qna-list">
+          <table>
+            <colgroup>
+              <col style="width: 100px;">
+              <col>
+              <col style="width: 100px;">
+              <col style="width: 150px;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="left">카테고리</th>
+                <th class="left">제목</th>
+                <th>답변상태</th>
+                <th>작성일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="left">결제·환불</td>
+                <td class="left tit"><a><sup></sup><span>멤버십 자동 갱신 해지하고 싶어요</span></a></td>
+                <td class="state">대기중</td>
+                <td>20:18</td>
+              </tr>
+              <tr>
+                <td class="left">계정</td>
+                <td class="left tit"><a><sup></sup><span>비밀번호 변경 메일이 안 와요</span></a></td>
+                <td class="state">대기중</td>
+                <td>18:12</td>
+              </tr>
+              <tr>
+                <td class="left">강의 문의</td>
+                <td class="left tit"><a><sup></sup><span>노트북이 필요한가요?</span></a></td>
+                <td class="state">대기중</td>
+                <td>11:09</td>
+              </tr>
+              <tr>
+                <td class="left">수강</td>
+                <td class="left tit"><a><span>원격훈련 1일 8차시 초과 시 어떻게 되나요?</span></a></td>
+                <td class="state confirm">답변완료</td>
+                <td>2026.06.04</td>
+              </tr>
+              <tr>
+                <td class="left">결제·환불</td>
+                <td class="left tit"><a><span>영수증 재발급 가능한가요?</span></a></td>
+                <td class="state confirm">답변완료</td>
+                <td>2026.05.22</td>
+              </tr>
+              <tr>
+                <td class="left">기타</td>
+                <td class="left tit"><a><span>앱으로도 수강할 수 있나요?</span></a></td>
+                <td class="state confirm">답변완료</td>
+                <td>2026.05.10</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination (Figma 정합) -->
+          <div class="qna-pagi">
+            <a class="prev">‹</a>
+            <a class="active">1</a>
+            <a>2</a>
+            <a>3</a>
+            <a class="next">›</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ★ CAPCHA modal (원격훈련 본인 인증) -->
+<div class="modal-backdrop" id="capchaModal">
+  <div class="modal">
+    <div class="head">
+      <h3>🔐 본인 인증 (CAPCHA)</h3>
+      <button onclick="closeCapcha()">×</button>
+    </div>
+    <p class="desc">노동부 룰 · 학습 중 정기 본인 인증. 글자를 입력하세요.</p>
+    <div class="capcha-img">7gK9pW</div>
+    <input type="text" placeholder="위 글자를 입력하세요" autocomplete="off">
+    <div class="actions">
+      <button class="btn outline" onclick="closeCapcha()">취소</button>
+      <button class="btn primary" onclick="alert('인증 완료'); closeCapcha();">인증</button>
+    </div>
+  </div>
+</div>
+
+<!-- ★ Mobile bottom tab -->
+<nav class="mobile-tab-bar">
+  <div class="tab" onclick="goto('home')"><span class="icon">🏠</span>홈</div>
+  <div class="tab" onclick="goto('class-list')"><span class="icon">📚</span>클래스</div>
+  <div class="tab" onclick="goto('dashboard')"><span class="icon">🎓</span>대시보드</div>
+  <div class="tab" onclick="toggleLnb()"><span class="icon">☰</span>전체 메뉴</div>
+</nav>
+
+<script>
+  /* ============ Routing (hash-based) ============ */
+  const PORTAL_PAGES = ['dashboard','courses','attendance','grades','qna','account','order','coupon','qna-help'];
+  const PLAYER_PAGES = ['player'];
+  const CLASSROOM_PAGES = ['classroom','classroom-player','classroom-v2','classroom-v2-player'];
+  const PUBLIC_PAGES = ['home','class-list','lecture-detail'];
+
+  function goto(name) {
+    if (!name) return;
+    window.location.hash = name;
+    render(name);
+    closeLnb();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function render(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.querySelector(`[data-page="${name}"]`);
+    if (target) target.classList.add('active');
+
+    // toggle body area class (LNB visible only on portal pages)
+    let area = 'public';
+    if (PLAYER_PAGES.includes(name)) area = 'player';
+    else if (CLASSROOM_PAGES.includes(name)) area = 'classroom';
+    else if (PORTAL_PAGES.includes(name)) area = 'portal';
+    document.body.setAttribute('data-area', area);
+
+    // update GNB primary nav active
+    document.querySelectorAll('.opp-gnb nav.primary a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('data-nav') === name);
+    });
+
+    // update LNB active (li.on = mint color)
+    document.querySelectorAll('.lnb ul li').forEach(li => {
+      if (li.classList.contains('log')) return;
+      li.classList.toggle('on', li.getAttribute('data-nav') === name);
+    });
+
+    // update mobile tab active
+    document.querySelectorAll('.mobile-tab-bar .tab').forEach(t => t.classList.remove('active'));
+  }
+
+  function bootstrap() {
+    const hash = window.location.hash.replace('#','') || 'home';
+    render(hash);
+  }
+
+  /* ============ LNB toggle (모바일) ============ */
+  function toggleLnb() {
+    const lnb = document.getElementById('lnb');
+    const overlay = document.getElementById('lnbOverlay');
+    lnb.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+  function closeLnb() {
+    document.getElementById('lnb').classList.remove('open');
+    document.getElementById('lnbOverlay').classList.remove('open');
+  }
+
+  /* ============ Profile dropdown ============ */
+  function toggleProfile() {
+    document.getElementById('profileWrap').classList.toggle('open');
+  }
+  function closeProfile() {
+    document.getElementById('profileWrap').classList.remove('open');
+  }
+  document.addEventListener('click', (e) => {
+    const w = document.getElementById('profileWrap');
+    if (w && !w.contains(e.target)) closeProfile();
+  });
+
+  /* ============ Classroom tab switching ============ */
+  function roomTab(name) {
+    document.querySelectorAll('.room-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.querySelector(`[data-room="${name}"]`);
+    if (panel) panel.classList.add('active');
+    document.querySelectorAll('.classroom-tabs button').forEach(b => b.classList.remove('active'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+  }
+
+  /* ============ Classroom v2 side tab switching ============ */
+  function sideTab(name) {
+    document.querySelectorAll('.room-side-panel').forEach(p => p.style.display = 'none');
+    const panel = document.querySelector(`[data-side="${name}"]`);
+    if (panel) panel.style.display = 'block';
+    document.querySelectorAll('.room-side-tabs button').forEach(b => b.classList.remove('active'));
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
+  }
+
+  /* ============ CAPCHA modal ============ */
+  function openCapcha() { document.getElementById('capchaModal').classList.add('open'); }
+  function closeCapcha() { document.getElementById('capchaModal').classList.remove('open'); }
+
+  /* ============ Study record period toggle ============ */
+  function switchStudyPeriod(period) {
+    document.querySelectorAll('.study-view').forEach(v => {
+      const match = v.getAttribute('data-period') === period;
+      v.classList.toggle('active', match);
+      v.style.display = match ? '' : 'none';
+    });
+    document.querySelectorAll('#studyRecordSeg button').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-period') === period);
+    });
+  }
+
+  /* ============ VOD player tab switching ============ */
+  function switchVodTab(name) {
+    document.querySelectorAll('.vod-panel').forEach(p => {
+      const match = p.getAttribute('data-vodpanel') === name;
+      p.classList.toggle('active', match);
+      p.style.display = match ? '' : 'none';
+    });
+    document.querySelectorAll('.vod-tab-link').forEach(a => {
+      a.classList.toggle('on', a.getAttribute('data-vodtab') === name);
+    });
+  }
+
+  /* ============ Init ============ */
+  window.addEventListener('hashchange', () => bootstrap());
+  window.addEventListener('DOMContentLoaded', bootstrap);
+</script>
+
+</body>
+</html>
