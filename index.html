@@ -139,8 +139,8 @@
     --accent-mint: var(--mint-1);
 
     /* Layout = openpath.kr 라이브 명세 */
-    --container-max: 1752px;
-    --container-pad: 84px; /* 라이브 header padding 0 84px */
+    --container-max: 1392px; /* LMS 표준 정합 = openpath.kr 마이페이지 ≈ 1392 / Coursera·인프런·클래스101 1200-1400 */
+    --container-pad: 60px; /* 라이브 header padding */
     --gnb-h: 92px;
     --lnb-w: 240px; /* Figma Sidebar 정확치 (라이브 269 → Deliver 240) */
     --gap: 20px;
@@ -2867,7 +2867,7 @@
   /* portal 모드 = layout padding top 줄임 (자체 헤더 64h 따로) */
   body[data-area="portal"] .layout { padding-top: 32px; }
 
-  /* My Classroom Header (자체 minimal 헤더) */
+  /* My Classroom Header (자체 minimal 헤더 = 풀폭 background + inner 1392) */
   .my-classroom-header {
     display: none; /* default = 숨김 / portal mode 만 표시 */
     position: sticky; top: 0;
@@ -2875,10 +2875,30 @@
     height: 64px;
     background: var(--gray-10);
     color: #FFFFFF;
-    padding: 0 32px;
+    border-bottom: 1px solid var(--gray-09);
+  }
+  body[data-area="portal"] .my-classroom-header {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+  /* inner = container 1392 정합 */
+  .my-classroom-header > .mc-header-left,
+  .my-classroom-header > .mc-header-right {
+    /* skip: 추후 wrap 추가 시 사용 */
+  }
+  .my-classroom-header {
+    padding: 0;
+  }
+  .mc-header-inner {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-pad);
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--gray-09);
+    gap: 16px;
   }
   .mc-header-left {
     display: flex; align-items: center; gap: 24px;
@@ -3706,6 +3726,7 @@
 
 <!-- ★ My Classroom Header (자체 minimal 헤더 = 풀페이지 "내 강의장" 진입 시 표시) -->
 <header class="my-classroom-header">
+ <div class="mc-header-inner">
   <div class="mc-header-left">
     <!-- 햄버거 = 모바일만 표시 (1180 이하) -->
     <button class="mc-header-hamburger" aria-label="메뉴" onclick="openMcMobileNav()">☰</button>
@@ -3738,6 +3759,7 @@
 
     <button class="mc-header-exit" onclick="goto('home')">‹ 포털 나가기</button>
   </div>
+ </div>
 </header>
 
 <!-- ★ 알림 Panel (코드잇 패턴 정합 = 우측 slide 380 / 모바일 풀스크린) -->
@@ -4206,8 +4228,8 @@
       <!-- 알림 = 자체 헤더 종 panel로 별도 surface / 최근 수료증 = 하단 별도 row -->
       <div class="col-stack">
         <div class="card-head" style="margin: 8px 0;">
-          <h3>수강 중 클래스 <span class="tag mint">3</span></h3>
-          <a class="view-all" onclick="goto('courses')">전체 보기 ›</a>
+          <h3>최근 수강 강의</h3>
+          <a class="view-all" onclick="goto('courses')">전체 9개 보기 ›</a>
         </div>
 
         <!-- 원격훈련 R02 = 메디 강의장 (별도 풀스크린). stat row (진도/출석/점수) -->
