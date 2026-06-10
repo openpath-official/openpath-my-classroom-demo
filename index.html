@@ -749,7 +749,74 @@
     border-color: #FFFFFF;
   }
 
-  /* ★ Streak 뱃지 = "연속 N일째 학습 중" (page-hero 우측) */
+  /* ★ Dash Greet = 검은 박스 X / 단순 인사 + streak 우측 */
+  .dash-greet {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 4px 24px;
+  }
+  .dash-greet-text { flex: 1; min-width: 0; }
+  .dash-greet-text h1 {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    margin-bottom: 8px;
+  }
+  .dash-greet-text p {
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+  }
+  .dash-greet-streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, var(--mint-01), #FFFFFF);
+    border: 1px solid var(--mint-03);
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  .dash-greet-streak .streak-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .dash-greet-streak .streak-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .dash-greet-streak .streak-count {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-07);
+    letter-spacing: -0.02em;
+  }
+  .dash-greet-streak .streak-count strong {
+    color: var(--primary);
+    font-weight: 900;
+    font-size: 18px;
+    margin: 0 2px;
+  }
+  .dash-greet-streak .streak-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: -0.02em;
+  }
+  @media (max-width: 720px) {
+    .dash-greet { flex-direction: column; align-items: stretch; gap: 12px; }
+    .dash-greet-text h1 { font-size: 22px; }
+    .dash-greet-streak { align-self: flex-start; padding: 8px 14px; }
+  }
+
+  /* ★ Streak 뱃지 (기존 page-hero 우측) — 사용 X but 호환 유지 */
   .page-hero-streak {
     display: inline-flex;
     align-items: center;
@@ -934,9 +1001,76 @@
     border: 1px solid transparent;
   }
   .cal-grid .day.out { color: #D1D5DB; }
-  .cal-grid .day.has { background: var(--accent-mint); color: var(--primary-dark); font-weight: 700; }
-  .cal-grid .day.has.heavy { background: var(--primary); color: #FFFFFF; }
-  .cal-grid .day.today { border: 2px solid var(--primary); font-weight: 800; }
+  /* ★ 5단계 학습량 색 (Mint 단계). 기준 = 그날 학습 시간:
+     l0 = 0 (학습 X)            = Gray00
+     l1 = 1~30분                = Mint01
+     l2 = 30~60분               = Mint03
+     l3 = 60~120분              = Mint05
+     l4 = 120분 이상            = Mint07 */
+  .cal-grid .day.l0 { background: var(--gray-00); color: var(--gray-05); }
+  .cal-grid .day.l1 { background: var(--mint-01); color: var(--mint-08); font-weight: 600; }
+  .cal-grid .day.l2 { background: var(--mint-03); color: var(--mint-08); font-weight: 700; }
+  .cal-grid .day.l3 { background: var(--mint-05); color: #FFFFFF; font-weight: 700; }
+  .cal-grid .day.l4 { background: var(--mint-07); color: #FFFFFF; font-weight: 800; }
+  /* legacy has/heavy (호환 유지) */
+  .cal-grid .day.has { background: var(--mint-03); color: var(--mint-08); font-weight: 700; }
+  .cal-grid .day.has.heavy { background: var(--mint-07); color: #FFFFFF; }
+  .cal-grid .day.today {
+    box-shadow: 0 0 0 2px var(--primary), 0 0 0 4px #FFFFFF;
+    z-index: 1;
+    font-weight: 800;
+  }
+
+  /* ★ Tooltip (호버 시 학습 시간 표시) */
+  .cal-grid .day[data-hours] { position: relative; }
+  .cal-grid .day[data-hours]:hover::after {
+    content: attr(data-hours);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gray-10);
+    color: #FFFFFF;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .cal-grid .day[data-hours]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 1px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: var(--gray-10);
+    z-index: 10;
+  }
+
+  /* Cal legend (월간 안에도 표시. 기존 year-legend 패턴) */
+  .cal-legend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: -0.02em;
+    justify-content: flex-end;
+  }
+  .cal-legend .swatch {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+  }
+  .cal-legend .swatch.l0 { background: var(--gray-00); border: 1px solid var(--gray-02); }
+  .cal-legend .swatch.l1 { background: var(--mint-01); }
+  .cal-legend .swatch.l2 { background: var(--mint-03); }
+  .cal-legend .swatch.l3 { background: var(--mint-05); }
+  .cal-legend .swatch.l4 { background: var(--mint-07); }
 
   /* 수강 클래스 list (대시보드 + 수강 과목 공용) */
   .hybrid {
@@ -4077,13 +4211,13 @@
 
     <!-- ============ Page: 대시보드 (대시보드 홈) ============ -->
     <section class="page" data-page="dashboard">
-      <!-- ★ PageHero = 재찬님 인사 + 연속 학습 뱃지 우측 -->
-      <div class="page-hero">
-        <div class="page-hero-text">
+      <!-- ★ 인사 영역 = 검은 박스 X / 단순 텍스트 + streak 뱃지 우측 (시각 노이즈 최소) -->
+      <div class="dash-greet">
+        <div class="dash-greet-text">
           <h1>재찬님, 안녕하세요!</h1>
           <p>오늘도 즐거운 학습 되세요.</p>
         </div>
-        <div class="page-hero-streak">
+        <div class="dash-greet-streak">
           <span class="streak-icon">🔥</span>
           <div class="streak-text">
             <span class="streak-count">연속 <strong>7</strong>일째</span>
@@ -4130,6 +4264,11 @@
               <div class="val">4<span class="unit">시간 23분</span></div>
               <div class="sub">지난 주 대비 +52분</div>
             </div>
+            <div class="record-stat">
+              <div class="label">📈 평균 학습 시간/일</div>
+              <div class="val">52<span class="unit">분</span></div>
+              <div class="sub">학습일 기준 평균</div>
+            </div>
           </div>
           <div class="calendar">
             <div class="cal-head">
@@ -4161,6 +4300,11 @@
               <div class="val">12<span class="unit">시간 11분</span></div>
               <div class="sub">지난 달 대비 +2시간 18분</div>
             </div>
+            <div class="record-stat">
+              <div class="label">📈 평균 학습 시간/일</div>
+              <div class="val">1<span class="unit">시간 31분</span></div>
+              <div class="sub">학습일 8일 기준 평균</div>
+            </div>
           </div>
           <div class="calendar">
             <div class="cal-head">
@@ -4169,11 +4313,52 @@
             </div>
             <div class="cal-grid">
               <div class="dow">일</div><div class="dow">월</div><div class="dow">화</div><div class="dow">수</div><div class="dow">목</div><div class="dow">금</div><div class="dow">토</div>
-              <div class="day out">31</div><div class="day has">1</div><div class="day has heavy">2</div><div class="day">3</div><div class="day has">4</div><div class="day has heavy">5</div><div class="day">6</div>
-              <div class="day">7</div><div class="day has">8</div><div class="day today has heavy">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div>
-              <div class="day">14</div><div class="day">15</div><div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div>
-              <div class="day">21</div><div class="day">22</div><div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div>
-              <div class="day">28</div><div class="day">29</div><div class="day">30</div><div class="day out">1</div><div class="day out">2</div><div class="day out">3</div><div class="day out">4</div>
+              <div class="day out">31</div>
+              <div class="day l2" data-hours="6.1 · 42분">1</div>
+              <div class="day l4" data-hours="6.2 · 2시간 18분">2</div>
+              <div class="day l0" data-hours="6.3 · 학습 X">3</div>
+              <div class="day l1" data-hours="6.4 · 18분">4</div>
+              <div class="day l4" data-hours="6.5 · 2시간 36분">5</div>
+              <div class="day l0" data-hours="6.6 · 학습 X">6</div>
+
+              <div class="day l0" data-hours="6.7 · 학습 X">7</div>
+              <div class="day l2" data-hours="6.8 · 51분">8</div>
+              <div class="day today l3" data-hours="오늘 6.9 · 1시간 24분">9</div>
+              <div class="day l0" data-hours="6.10 · 학습 X">10</div>
+              <div class="day l0" data-hours="6.11 · 학습 X">11</div>
+              <div class="day l0" data-hours="6.12 · 학습 X">12</div>
+              <div class="day l0" data-hours="6.13 · 학습 X">13</div>
+
+              <div class="day l0" data-hours="6.14 · 학습 X">14</div>
+              <div class="day l0" data-hours="6.15 · 학습 X">15</div>
+              <div class="day l0" data-hours="6.16 · 학습 X">16</div>
+              <div class="day l0" data-hours="6.17 · 학습 X">17</div>
+              <div class="day l0" data-hours="6.18 · 학습 X">18</div>
+              <div class="day l0" data-hours="6.19 · 학습 X">19</div>
+              <div class="day l0" data-hours="6.20 · 학습 X">20</div>
+
+              <div class="day l0" data-hours="6.21 · 학습 X">21</div>
+              <div class="day l0" data-hours="6.22 · 학습 X">22</div>
+              <div class="day l0" data-hours="6.23 · 학습 X">23</div>
+              <div class="day l0" data-hours="6.24 · 학습 X">24</div>
+              <div class="day l0" data-hours="6.25 · 학습 X">25</div>
+              <div class="day l0" data-hours="6.26 · 학습 X">26</div>
+              <div class="day l0" data-hours="6.27 · 학습 X">27</div>
+
+              <div class="day l0" data-hours="6.28 · 학습 X">28</div>
+              <div class="day l0" data-hours="6.29 · 학습 X">29</div>
+              <div class="day l0" data-hours="6.30 · 학습 X">30</div>
+              <div class="day out">1</div><div class="day out">2</div><div class="day out">3</div><div class="day out">4</div>
+            </div>
+            <!-- Legend = 학습량 색 기준 -->
+            <div class="cal-legend">
+              <span>학습량</span>
+              <div class="swatch l0" title="0분"></div>
+              <div class="swatch l1" title="1~30분"></div>
+              <div class="swatch l2" title="30~60분"></div>
+              <div class="swatch l3" title="60~120분"></div>
+              <div class="swatch l4" title="120분+"></div>
+              <span>적음 → 많음</span>
             </div>
           </div>
         </div>
@@ -4190,6 +4375,11 @@
               <div class="label">⏱ 올해 학습 시간</div>
               <div class="val">142<span class="unit">시간 18분</span></div>
               <div class="sub">월 평균 23시간 43분</div>
+            </div>
+            <div class="record-stat">
+              <div class="label">📈 평균 학습 시간/일</div>
+              <div class="val">2<span class="unit">시간 6분</span></div>
+              <div class="sub">학습일 68일 기준 평균</div>
             </div>
           </div>
           <div class="calendar">
