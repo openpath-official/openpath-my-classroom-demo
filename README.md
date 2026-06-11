@@ -1,6 +1,17 @@
-# OPENPATH 내 강의장 (풀페이지 데모)
+# OPENPATH 내 강의장 (풀페이지 데모) — ⚠ ARCHIVED
 
-오픈패스 LMS 이관 = 메디오피아 default 풀페이지 진입 가정 데모.
+> **🚨 폐기 상태 (2026-06-11)**
+>
+> 메디오피아 임종혁 본부장 회신 = **마이페이지 통합 안 채택**.
+> 풀페이지 데모 = 작업 X. 작업 결과 보존 (참고용).
+>
+> **진행 데모** = https://github.com/openpath-official/openpath-learner-portal-demo (마이페이지 통합형)
+>
+> 이식 list = `docs/reports/2026-06-11_세션_핸드오버_통합안_이식.md`
+
+---
+
+오픈패스 LMS 이관 = 메디오피아 default 풀페이지 진입 가정 데모 (= **결과적으로 채택 X**).
 
 ## 보기
 
